@@ -1,9 +1,32 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 
-const Country = ({ country, showDetail, onClick }) => {
-  const { name, languages, capital, area, flags } = country
-  if (showDetail) return (
+const Country = ({ country }) => {
+  const { name, languages, capital, area, flags, latlng } = country
+  const [weather, setWeather] = useState([])
+
+  const getWeather = async () => {
+    const url = 'https://api.openweathermap.org/data/2.5/weather'
+    const params = new URLSearchParams()
+    params.append('lat', latlng[0])
+    params.append('lon', latlng[1])
+    params.append('units', 'metric')
+    params.append('appid', process.env.REACT_APP_OPEN_WEATHER_KEY)
+    const res = await axios.get(url, {params})
+    const data = res.data
+    const newWeather = {
+      temperature: data.main.temp,
+      wind: data.wind.speed,
+      icon: `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+    }
+    setWeather(newWeather)
+  }
+
+  useEffect(() => {
+    getWeather()
+  }, [])
+
+  return (
     <div>
       <h2>{name.common}</h2>
       capital {capital} <br />
@@ -13,12 +36,18 @@ const Country = ({ country, showDetail, onClick }) => {
         {Object.entries(languages).map(([key, value]) => <li key={key}>{value}</li>)}
       </ul>
       <img alt="" src={flags.png} width='200' height='150' />
+      <h3>Weather in {capital}</h3>
+      temperature {weather.temperature} Celcius <br />
+      <img src={weather.icon} alt="" /> <br />
+      wind {weather.wind} m/s
     </div>
   )
+}
+
+const CountryList = ({country:{name},onClick}) => {
   return (
     <li style={{listStyleType: "none"}}>
       {name.common} <button onClick={() => onClick(name.common)}>show</button>
-      <img alt="" src={flags.png} style={{ display: "none" }} width='200' height='150' />
     </li>
   )
 }
@@ -41,8 +70,6 @@ function App() {
   
   const handleShowBtnClick = (value) => {
     setFilter(value)
-    
-    console.log("debug value:", value)
   }
 
   useEffect(() => {
@@ -50,7 +77,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    console.log("useEffect:",filter)
     setCountriesFiltered(countries.filter(c => c.name.common.toLowerCase().includes(filter.toLowerCase())))
   }, [countries, filter])
 
@@ -61,11 +87,10 @@ function App() {
       {countriesFiltered.length > 10 ?
         "Too many matches, specify another filter" :
         countriesFiltered.length === 1 ?
-          countriesFiltered.map(country => <Country key={country.name.common} country={country} showDetail={true} />) :
+          countriesFiltered.map(country => <Country key={country.name.common} country={country} />) :
           countriesFiltered.map(country => 
-            <Country key={country.name.common}
+            <CountryList key={country.name.common}
               country={country}
-              showDetail={false}
               onClick={handleShowBtnClick}
             />)
       }
