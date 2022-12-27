@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
-import { getPersons } from './data/Person';
+import { getPersons, addPerson, deletePerson, updatePerson } from './data/Person';
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,32 +10,59 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
   
-  const personsToShow = persons.filter( p => p.name.toLowerCase().includes(filterName))
+  const personsToShow = persons.filter(p => p.name?.toLowerCase().includes(filterName))
+  
+  const mGetPersons = async () => {
+    const res = await getPersons()
+    setPersons(res.data)
+  }
 
-  const handleFormSubmit = (event) => {
+  const mDeletePerson = async (person) => {
+    const { name, id } = person
+    if (!window.confirm(`Delete ${name}?`)) return
+    const res = await deletePerson(id)
+    if (res.status.toString() === '200') mGetPersons()
+  }
+
+  const mAddPerson = async (person) => {
+    const res = await addPerson(person)
+    if (res.status.toString() === '201') mGetPersons()
+  }
+
+  const mUpdatePerson = async (person) => {
+    person.id = persons.find(p => p.name === person.name).id
+    const confirm = `${newName} is already added to phonebook,` +
+      `replace the old number with a new one?`
+    if (!window.confirm(confirm)) return
+    const res = await updatePerson(person)
+    if (res.status.toString() === '200') mGetPersons()
+  }
+
+  const handleFormSubmit = async (event) => {
     event.preventDefault()
-    
-    if (!newName || !newNumber) return alert("Please gill in all the fields")
 
-    const person = { name: newName, number: newNumber, id: persons[persons.length-1].id + 1 }
+    if (!newName || !newNumber) return alert("Please fill all the fields")
 
-    !persons.find(p => p.name === newName || p.number === newNumber) ?
-      setPersons(persons.concat(person)) :
-      alert(`cannot add duplicate name or number to phonebook`)
+    const person = { name: newName, number: newNumber }
+
+    if (persons.find(p => p.name === newName)) return mUpdatePerson(person)
+
+    mAddPerson(person)
   }
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
+  const handlePersonDeleteButton = async (person) => {
+    mDeletePerson(person)
+  }
+
   const handleFilterNameChange = (event) => {
-    console.log(event.target.value)
     setFilterName(event.target.value)
   }
 
@@ -44,12 +71,9 @@ const App = () => {
     setNewNumber('')
     setFilterName('')
   }, [persons])
-  
-  useEffect(() => {
-    getPersons()
-      .then(res => setPersons(res.data))
-  }, [])
-  
+
+  useEffect(() => {mGetPersons()}, [])
+
 
   return (
     <div>
@@ -63,7 +87,7 @@ const App = () => {
         onChangeNumber={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} onClick={handlePersonDeleteButton} />
     </div>
   )
 }

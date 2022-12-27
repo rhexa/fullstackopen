@@ -1,9 +1,13 @@
 import React from 'react'
 
-const Persons = ({persons}) => {
+const Persons = ({persons,onClick}) => {
   return (
-    <ul>
-        {persons.map(p => <li key={p.id}>{p.name} {p.number}</li>)}
+    <ul style={{padding: 0}}>
+        {persons.map(p =>
+          <li key={p.id} style={{listStyleType:'none'}}>
+            {p.name} {p.number} <button onClick={()=>onClick(p)}>delete</button>
+          </li>
+        )}
     </ul>
   )
 }
