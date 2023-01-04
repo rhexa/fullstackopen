@@ -1,0 +1,19 @@
+@URL = http://localhost:3001/api/persons
+
+### Get all
+GET {{URL}}
+
+### Get
+GET {{URL}}/5
+
+### Add
+POST {{URL}}
+content-type: application/json
+
+{
+    "name": "samsu",
+    "number": "84-65-654949"
+}
+
+### Delete
+DELETE {{URL}}/5
