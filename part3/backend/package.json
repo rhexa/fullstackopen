@@ -1,0 +1,30 @@
+{
+  "name": "phonebook-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhexa/fullstackopen-p3.git"
+  },
+  "author": "rhexa",
+  "license": "SEE LICENCE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/rhexa/fullstackopen-p3/issues"
+  },
+  "homepage": "https://github.com/rhexa/fullstackopen-p3#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.4.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
