@@ -4,16 +4,16 @@
 GET {{URL}}
 
 ### Get
-GET {{URL}}/5
+GET {{URL}}/65004439dd9070a486c71700
 
 ### Add
 POST {{URL}}
 content-type: application/json
 
 {
-    "name": "samsu",
-    "number": "84-65-654949"
+    "name": "Ada Lovelace",
+    "number": "040-1231236"
 }
 
 ### Delete
-DELETE {{URL}}/5
+DELETE {{URL}}/65009b812d0fb84311eff260

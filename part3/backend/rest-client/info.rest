@@ -1,0 +1,10 @@
+@URL = http://localhost:3001/info/
+
+### Get persons count
+GET {{URL}}
+
+### Get db info
+GET {{URL}}/db
+
+### Get db state
+GET {{URL}}/db/state

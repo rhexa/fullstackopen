@@ -1,28 +1,48 @@
 const express = require('express')
 const router = express.Router()
-const persons = require('../../models/persons');
+const { Error:{ValidationError} } = require('mongoose')
+const persons = require('../../controllers/persons');
 
-router.get('/', (req, res) => {
-  res.json(persons.getAll())
+router.get('/', async (req, res) => {
+  res.json(await persons.getAll())
 })
 
-router.get('/:id', (req, res) => {
-  res.json(persons.get(req.params.id))
+router.get('/:id', async (req, res) => {
+  res.json(await persons.get(req.params.id))
 })
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const person = req.body
-  if (!person.number || !person.name) {
-    res.status(400).json({ error: 'fill all the required fields' })
-  } else if (persons.isDuplicate(person)) {
-    res.status(400).json({ error: 'name must be unique' })
-  } else {
-    res.status(201).json(persons.add(person))
+
+  try {
+    const result = await persons.add(person)
+    res.status(201).json(result)
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      const validationErrors = {};
+      for (const field in error.errors) {
+        validationErrors[field] = error.errors[field].message;
+      }
+      res.status(400).json({ validationErrors })
+    } else if (error.code === 11000) {
+      res.status(400).json({ error: "Duplicate key error. Person's name already exists" })
+    } else {
+      res.status(500).json({ error: 'Internal server error' })
+    }
   }
 })
 
-router.delete('/:id', (req, res) => {
-  res.status(200).json(persons.del(req.params.id))
+router.delete('/:id', async (req, res) => {
+  try {
+    const person = await persons.del(req.params.id)
+    if (person) {
+      res.status(200).json(person)
+    } else {
+      res.status(404).json({ error: 'ID not found'})
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' })
+  }
 })
 
 module.exports = router
