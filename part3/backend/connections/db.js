@@ -7,8 +7,6 @@ mongoose.set('strictQuery', false)
 mongoose.connect(url, { family: 4, serverSelectionTimeoutMS: 5000, maxPoolSize: 10 })
   .then((result) => {
     console.log("Connected")
-  }).catch((err) => {
-    console.log(err)
-  })
+  }).catch(error => {throw error})
 
 module.exports = mongoose

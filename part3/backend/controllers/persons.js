@@ -11,7 +11,7 @@ const getAll = async () => {
 
 const get = async (id) => {
   try {
-    const person = await Person.find({_id: id})
+    const person = await Person.findById(id)
     return person
   } catch (error) {
     throw error
@@ -20,15 +20,20 @@ const get = async (id) => {
 
 const add = async (person) => {
   const newPerson = new Person(person)
-  const {name, number} = person
 
   try {
     await newPerson.save()
-    console.log(`added ${name} number ${number} to phonebook`)
-    console.log(newPerson)
     return person
   } catch (error) {
-    console.error(error.message)
+    throw error
+  }
+}
+
+const update = async (id, person) => {
+  try {
+    const newPerson = await Person.findByIdAndUpdate(id, person, { new: true })
+    return newPerson
+  } catch (error) {
     throw error
   }
 }
@@ -50,6 +55,7 @@ module.exports = {
   getAll,
   get,
   add,
+  update,
   del,
   count
 }

@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const { Error:{ValidationError} } = require('mongoose')
 const persons = require('../../controllers/persons');
 
 router.get('/', async (req, res) => {
@@ -11,28 +10,28 @@ router.get('/:id', async (req, res) => {
   res.json(await persons.get(req.params.id))
 })
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   const person = req.body
 
   try {
     const result = await persons.add(person)
     res.status(201).json(result)
   } catch (error) {
-    if (error instanceof ValidationError) {
-      const validationErrors = {};
-      for (const field in error.errors) {
-        validationErrors[field] = error.errors[field].message;
-      }
-      res.status(400).json({ validationErrors })
-    } else if (error.code === 11000) {
-      res.status(400).json({ error: "Duplicate key error. Person's name already exists" })
-    } else {
-      res.status(500).json({ error: 'Internal server error' })
-    }
+    next(error)
   }
 })
 
-router.delete('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
+  try {
+    const result = await persons.update(req.params.id, req.body)
+    res.status(200).json(result)
+  } catch (error) {
+    console.error(error)
+    next(error)
+  }
+})
+
+router.delete('/:id', async (req, res, next) => {
   try {
     const person = await persons.del(req.params.id)
     if (person) {
@@ -41,7 +40,7 @@ router.delete('/:id', async (req, res) => {
       res.status(404).json({ error: 'ID not found'})
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' })
+    next(error)
   }
 })
 
