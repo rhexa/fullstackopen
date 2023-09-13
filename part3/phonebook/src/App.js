@@ -21,6 +21,16 @@ const App = () => {
         setErrorMessage(`Information of ${error.person.name} has already been removed. Refresh your browser!`)
         return
       }
+      if (error.response.data.validationErrors) {
+        let logs = ""
+        const errors = error.response.data.validationErrors
+        const errorKeys = Object.keys(errors)
+        errorKeys.forEach(k => {
+          logs = logs.concat(`${errors[k]}. `)
+        })
+        setErrorMessage(logs)
+        return
+      }
       setErrorMessage(`response error: ${error.message}`)
     } else if (error.request) {
       setErrorMessage(`request error: ${error.message}.\nIs server down?`)
@@ -60,7 +70,7 @@ const App = () => {
       setSuccessMessage(`Added ${person.name}`)
       mGetPersons()
     } catch (error) {
-      error(error)
+      errorHandler(error)
     }
   }
   
