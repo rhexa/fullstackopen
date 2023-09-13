@@ -3,6 +3,7 @@ const db = require('../connections/db')
 const personSchema = new db.Schema({
   name: {
     type: String,
+    minLength: 3,
     required: true,
     unique: true
   },
