@@ -31,7 +31,7 @@ const add = async (person) => {
 
 const update = async (id, person) => {
   try {
-    const newPerson = await Person.findByIdAndUpdate(id, person, { new: true })
+    const newPerson = await Person.findByIdAndUpdate(id, person, { new: true, runValidators: true })
     return newPerson
   } catch (error) {
     throw error

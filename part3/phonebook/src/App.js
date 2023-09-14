@@ -26,8 +26,10 @@ const App = () => {
         const errors = error.response.data.validationErrors
         const errorKeys = Object.keys(errors)
         errorKeys.forEach(k => {
-          logs = logs.concat(`${errors[k]}. `)
+          const err = errors[k].startsWith('Path') ? errors[k].slice(4) : errors[k]
+          logs = logs.concat(`${err}. `)
         })
+
         setErrorMessage(logs)
         return
       }
@@ -79,10 +81,15 @@ const App = () => {
     const confirm = `${newName} is already added to phonebook,` +
     `replace the old number with a new one?`
     if (!window.confirm(confirm)) return
-    const res = await updatePerson(person)
-    if (res.status.toString() !== '200') return
-    setSuccessMessage(`${person.name} is updated`)
-    mGetPersons()
+    
+    try {
+      const res = await updatePerson(person)
+      if (res.status.toString() !== '200') return
+      setSuccessMessage(`${person.name} is updated`)
+      mGetPersons()
+    } catch (error) {
+      errorHandler(error)
+    }
   }
 
   const handleFormSubmit = async (event) => {
