@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const persons = require('../models/persons');
+const persons = require('../models/persons')
 
-router.get('/', async (req,res) => {
+router.get('/', async (req, res) => {
   const template = `
   Phoneboook has info for ${await persons.count()} people <br>
   <br>

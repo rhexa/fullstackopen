@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const persons = require('../../controllers/persons');
+const persons = require('../../controllers/persons')
 
 router.get('/', async (req, res) => {
   res.json(await persons.getAll())
@@ -36,7 +36,7 @@ router.delete('/:id', async (req, res, next) => {
     if (person) {
       res.status(200).json(person)
     } else {
-      res.status(404).json({ error: 'ID not found'})
+      res.status(404).json({ error: 'ID not found' })
     }
   } catch (error) {
     next(error)

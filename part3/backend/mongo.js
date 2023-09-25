@@ -4,7 +4,7 @@ const password = encodeURIComponent(process.argv[2])
 const name = null || process.argv[3]
 const number = null || process.argv[4]
 
-const url = process.env.DB_STRING.replace("<password>", password)
+const url = process.env.DB_STRING.replace('<password>', password)
 
 mongoose.set('strictQuery',false)
 mongoose.connect(url)
@@ -34,5 +34,6 @@ const contact = new Contact({
 
 contact.save().then(result => {
   console.log(`added ${name} number ${number} to phonebook`)
+  console.log(result)
   mongoose.connection.close()
 })

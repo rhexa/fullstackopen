@@ -1,4 +1,5 @@
-const Person = require('../models/persons');
+/* eslint-disable no-useless-catch */
+const Person = require('../models/persons')
 
 const getAll = async () => {
   try {
