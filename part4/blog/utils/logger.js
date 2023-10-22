@@ -1,9 +1,12 @@
+let isInfo,isError = true
+process.env.NODE_ENV === "test" && isInfo,isError = false
+
 const info = (...params) => {
-  console.log(...params)
+  isInfo && console.log(...params)
 }
 
 const error = (...params) => {
-  console.error(...params)
+  isError && console.error(...params)
 }
 
 module.exports = {
