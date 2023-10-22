@@ -93,6 +93,28 @@ describe('blog service post', () => {
     )
     expect(blog).toMatchObject(newBlog)
   })
+
+  test('should return status 400 when form is missing title', async () => {
+    const blogNoTitle = {
+      "author": "Lakin, Oberbrunner and Harvey",
+      "url": "https://cayla.com",
+      "likes": 452
+    }
+    const response = await api.post('/api/blogs').send(blogNoTitle)
+
+    expect(response.statusCode).toEqual(400)
+  })
+
+  test('should return status 400 when form is missing url', async () => {
+    const blogNoUrl = {
+      "title": "Frozen Operations e-services actuating",
+      "author": "Lakin, Oberbrunner and Harvey",
+      "likes": 452
+    }
+    const response = await api.post('/api/blogs').send(blogNoUrl)
+
+    expect(response.statusCode).toEqual(400)
+  })
 })
 
 afterAll(async () => {
