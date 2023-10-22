@@ -55,6 +55,15 @@ describe('blog service get', () => {
       expect(blog).toHaveProperty('id')
     }
   })
+
+  test('blog should contain property likes', async () => {
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+    
+    for (const blog of blogs) {
+      expect(blog).toHaveProperty('likes')
+    }
+  })
 })
 
 describe('blog service post', () => {
