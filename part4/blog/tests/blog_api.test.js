@@ -27,9 +27,9 @@ const initialBlog = [
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  initialBlog.forEach(async (blog) => {
-    await new Blog(blog).save()
-  })
+  for (const blog of initialBlog) {
+    await new Blog(blog).save();
+  }
 })
 
 describe('blogs services', () => { 
@@ -44,6 +44,15 @@ describe('blogs services', () => {
     const response = await api.get('/api/blogs')
   
     expect(response.body).toHaveLength(initialBlog.length)
+  })
+  
+  test('blog has property named id', async () => {
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+
+    for (const blog of blogs) {
+      expect(blog).toHaveProperty('id')
+    }
   })
 })
 
