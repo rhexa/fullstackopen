@@ -110,7 +110,23 @@ describe('deletion of a blog', () => {
     expect(blogAfter).not.toEqual(
       expect.arrayContaining([expect.objectContaining(blogToDelete)])
     )
-    console.log(blogAfter)
+  })
+})
+
+describe('modification of a blog', () => {
+  test('should return 200 when blog is successfully modified', async () => {
+    const blogBefore = await helper.blogsInDb()
+    const blogToUpdate = {...blogBefore[0]} // sprading the object to avoid the original ones from being overridden
+    blogToUpdate.likes = 300
+    
+    const response = await api.put('/api/blogs/'+blogToUpdate.id).send(blogToUpdate)
+    expect(response.statusCode).toEqual(200)
+    
+    const blogAfter = await helper.blogsInDb()
+    
+    expect(blogAfter).toEqual(
+      expect.arrayContaining([expect.objectContaining(blogToUpdate)])
+    )
   })
 })
 
