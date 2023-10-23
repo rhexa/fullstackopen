@@ -3,37 +3,17 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const helper = require('./test_helper');
 const _ = require('lodash')
-
-const initialBlog = [
-  {
-    "title": "withdrawal Human didactic mission-critical synthesize",
-    "author": "Veum, Reichel and Batz",
-    "url": "http://valentine.info",
-    "likes": 942,
-  },
-  {
-    "title": "Product Kids Myanmar RAM Computer",
-    "author": "Conn, Kovacek and Berge",
-    "url": "http://chanel.net",
-    "likes": 526,
-  },
-  {
-    "title": "Sports Franc Advanced intuitive",
-    "author": "Legros - Gerlach",
-    "url": "http://delpha.com",
-    "likes": 595,
-  }
-]
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  for (const blog of initialBlog) {
+  for (const blog of helper.initialBlogs) {
     await new Blog(blog).save();
   }
 })
 
-describe('blog service get', () => {
+describe('when there is initially some blogs saved', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -41,13 +21,13 @@ describe('blog service get', () => {
       .expect('Content-Type', /application\/json/)
   })
 
-  test('blogs are returned in the correct amount', async () => {
+  test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
-    expect(response.body).toHaveLength(initialBlog.length)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
-  test('blog has property named id', async () => {
+  test('blogs has property named id', async () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
     
@@ -56,7 +36,7 @@ describe('blog service get', () => {
     }
   })
 
-  test('blog should contain property likes', async () => {
+  test('blogs has property named likes', async () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
     
@@ -66,7 +46,7 @@ describe('blog service get', () => {
   })
 })
 
-describe('blog service post', () => {
+describe('addition of a new note', () => {
   const newBlog = {
     "title": "Frozen Operations e-services actuating",
     "author": "Lakin, Oberbrunner and Harvey",
@@ -74,7 +54,7 @@ describe('blog service post', () => {
     "likes": 452
   }
   
-  test('should be able to add a new blog', async () => {
+  test('should succeed with valid data', async () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
@@ -85,7 +65,7 @@ describe('blog service post', () => {
     const blogs = response.body
     const blog = _.find(blogs, newBlog)
 
-    expect(blogs).toHaveLength(initialBlog.length+1)
+    expect(blogs).toHaveLength(helper.initialBlogs.length+1)
     
     // beware of the types, using wrong type may result an error
     expect(blogs).toEqual(
@@ -114,6 +94,23 @@ describe('blog service post', () => {
     const response = await api.post('/api/blogs').send(blogNoUrl)
 
     expect(response.statusCode).toEqual(400)
+  })
+})
+
+describe('deletion of a blog', () => {
+  test('should return 204 when the blog is successfully deleted', async () => {
+    const blogBefore = await helper.blogsInDb()
+    const blogToDelete = blogBefore[0]
+    await api.delete('/api/blogs/'+blogToDelete.id).expect(204)
+
+    const blogAfter = await helper.blogsInDb()
+    
+    expect(blogAfter).toHaveLength(blogBefore.length-1)
+
+    expect(blogAfter).not.toEqual(
+      expect.arrayContaining([expect.objectContaining(blogToDelete)])
+    )
+    console.log(blogAfter)
   })
 })
 
