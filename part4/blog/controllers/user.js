@@ -9,7 +9,11 @@ router.get('/', async (request, response) => {
 
 router.post('/', async (request, response) => {
   const { username, name, password } = request.body
+  let error = new Error("password must be at least 3 characters")
+  error.name = "ValidationError"
 
+  if (password.length < 3) throw error
+  
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
 
