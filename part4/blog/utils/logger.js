@@ -1,5 +1,6 @@
-let isInfo,isError = true
-process.env.NODE_ENV === "test" && isInfo,isError = false
+let [isInfo,isError] = [true,true]
+
+process.env.NODE_ENV === "test" && (isInfo = isError = false)
 
 const info = (...params) => {
   isInfo && console.log(...params)
