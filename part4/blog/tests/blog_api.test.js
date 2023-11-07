@@ -5,11 +5,18 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const helper = require('./test_helper');
 const _ = require('lodash')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 beforeEach(async () => {
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', name: 'whatever', passwordHash })
+  await user.save()
+
   await Blog.deleteMany({})
   for (const blog of helper.initialBlogs) {
-    await new Blog(blog).save();
+    await api.post('/api/blogs').send(blog)
   }
 })
 
@@ -30,7 +37,7 @@ describe('when there is initially some blogs saved', () => {
   test('blogs has property named id', async () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
-    
+
     for (const blog of blogs) {
       expect(blog).toHaveProperty('id')
     }
@@ -39,9 +46,22 @@ describe('when there is initially some blogs saved', () => {
   test('blogs has property named likes', async () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
-    
+
     for (const blog of blogs) {
       expect(blog).toHaveProperty('likes')
+    }
+  })
+
+  test('blogs has property user object with properties: username, id, name', async () => {
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+
+    for (const blog of blogs) {
+      expect(blog).toHaveProperty('user')
+
+      expect(blog.user).toHaveProperty('username')
+      expect(blog.user).toHaveProperty('id')
+      expect(blog.user).toHaveProperty('name')
     }
   })
 })
@@ -53,25 +73,48 @@ describe('addition of a new note', () => {
     "url": "https://cayla.com",
     "likes": 452
   }
-  
+
   test('should succeed with valid data', async () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
-    
+
     const response = await api.get('/api/blogs')
     const blogs = response.body
     const blog = _.find(blogs, newBlog)
 
-    expect(blogs).toHaveLength(helper.initialBlogs.length+1)
-    
+    expect(blogs).toHaveLength(helper.initialBlogs.length + 1)
+
     // beware of the types, using wrong type may result an error
     expect(blogs).toEqual(
       expect.arrayContaining([expect.objectContaining(newBlog)])
     )
     expect(blog).toMatchObject(newBlog)
+  })
+
+  test('should succeed and result in blog containing user object', async () => {
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+
+    expect(blogs).toHaveLength(helper.initialBlogs.length + 1)
+
+    // beware of the types, using wrong type may result an error
+    expect(blogs).toEqual(
+      expect.arrayContaining([expect.objectContaining(newBlog)])
+    )
+
+    const blog = _.find(blogs, newBlog)
+    expect(blog).toMatchObject(newBlog)
+
+    expect(blog).toHaveProperty('user')
   })
 
   test('should return status 400 when form is missing title', async () => {
@@ -101,11 +144,11 @@ describe('deletion of a blog', () => {
   test('should return 204 when the blog is successfully deleted', async () => {
     const blogBefore = await helper.blogsInDb()
     const blogToDelete = blogBefore[0]
-    await api.delete('/api/blogs/'+blogToDelete.id).expect(204)
+    await api.delete('/api/blogs/' + blogToDelete.id).expect(204)
 
     const blogAfter = await helper.blogsInDb()
-    
-    expect(blogAfter).toHaveLength(blogBefore.length-1)
+
+    expect(blogAfter).toHaveLength(blogBefore.length - 1)
 
     expect(blogAfter).not.toEqual(
       expect.arrayContaining([expect.objectContaining(blogToDelete)])
@@ -116,14 +159,14 @@ describe('deletion of a blog', () => {
 describe('modification of a blog', () => {
   test('should return 200 when blog is successfully modified', async () => {
     const blogBefore = await helper.blogsInDb()
-    const blogToUpdate = {...blogBefore[0]} // sprading the object to avoid the original ones from being overridden
+    const blogToUpdate = { ...blogBefore[0] } // sprading the object to avoid the original ones from being overridden
     blogToUpdate.likes = 300
-    
-    const response = await api.put('/api/blogs/'+blogToUpdate.id).send(blogToUpdate)
+
+    const response = await api.put('/api/blogs/' + blogToUpdate.id).send(blogToUpdate)
     expect(response.statusCode).toEqual(200)
-    
+
     const blogAfter = await helper.blogsInDb()
-    
+
     expect(blogAfter).toEqual(
       expect.arrayContaining([expect.objectContaining(blogToUpdate)])
     )
