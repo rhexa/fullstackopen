@@ -1,24 +1,11 @@
-const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-const User = require('../models/user')
-const helper = require('./test_helper');
-const Blog = require('../models/blog')
+const helper = require('./test_helper')
 
 describe('when there is initially one user in db', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', name: 'whatever', passwordHash })
-    await user.save()
-
-    await Blog.deleteMany({})
-    for (const blog of helper.initialBlogs) {
-      await api.post('/api/blogs').send(blog)
-    }
-  })
+  beforeEach(async () => await helper.beforeEach(api))
 
   test('should return user object containing property of array of blogs and the blog should contain properties: title, author, url, likes, id', async () => {
     const result = await api.get('/api/users')

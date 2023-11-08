@@ -8,17 +8,7 @@ const _ = require('lodash')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
-beforeEach(async () => {
-  await User.deleteMany({})
-  const passwordHash = await bcrypt.hash('sekret', 10)
-  const user = new User({ username: 'root', name: 'whatever', passwordHash })
-  await user.save()
-
-  await Blog.deleteMany({})
-  for (const blog of helper.initialBlogs) {
-    await api.post('/api/blogs').send(blog)
-  }
-})
+beforeEach(async () => await helper.beforeEach(api))
 
 describe('when there is initially some blogs saved', () => {
   test('blogs are returned as json', async () => {
