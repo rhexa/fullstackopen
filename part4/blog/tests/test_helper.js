@@ -23,9 +23,9 @@ const initialBlogs = [
   }
 ]
 
-const initialUser = { 
-  username: 'root', 
-  name: 'whatever', 
+const initialUser = {
+  username: 'root',
+  name: 'whatever',
   password: "sekret"
 }
 const nonExistingId = async () => {
@@ -46,10 +46,18 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
-const beforeEach = async (api) => {
+const login = async (api) => {
+  const cred = {...initialUser}
+  delete cred.name
+  
+  const res = await api.post('/api/login').send(cred)
+  return res.body.token
+}
+
+const beforeEach = async () => {
   await User.deleteMany({})
   const passwordHash = await bcrypt.hash(initialUser.password, 10)
-  const userToAdd = { ...initialUser, passwordHash}
+  const userToAdd = { ...initialUser, passwordHash }
   delete userToAdd.password
 
   const user = new User(userToAdd)
@@ -57,7 +65,15 @@ const beforeEach = async (api) => {
 
   await Blog.deleteMany({})
   for (const blog of initialBlogs) {
-    await api.post('/api/blogs').send(blog)
+    const user = await User.findOne({})
+
+    blog.user = user.id
+
+    const blogToAdd = new Blog(blog)
+
+    const savedBlog = await blogToAdd.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
   }
 }
 
@@ -67,5 +83,6 @@ module.exports = {
   nonExistingId,
   blogsInDb,
   usersInDb,
-  beforeEach
+  beforeEach,
+  login
 }

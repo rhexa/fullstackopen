@@ -1,0 +1,18 @@
+const jwt = require('jsonwebtoken')
+
+const getToken = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
+
+const decodeToken = (token) => {
+  return jwt.verify(token, process.env.SECRET)
+}
+
+module.exports = {
+  getToken,
+  decodeToken
+}

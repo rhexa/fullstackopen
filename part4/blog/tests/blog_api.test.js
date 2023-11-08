@@ -2,13 +2,15 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-const Blog = require('../models/blog')
 const helper = require('./test_helper');
 const _ = require('lodash')
-const User = require('../models/user')
-const bcrypt = require('bcrypt')
 
-beforeEach(async () => await helper.beforeEach(api))
+var token = null
+
+beforeEach(async () => {
+  await helper.beforeEach(api)
+  token = await helper.login(api)
+})
 
 describe('when there is initially some blogs saved', () => {
   test('blogs are returned as json', async () => {
@@ -56,7 +58,7 @@ describe('when there is initially some blogs saved', () => {
   })
 })
 
-describe('addition of a new note', () => {
+describe('addition of a new note when user is authenticated', () => {
   const newBlog = {
     "title": "Frozen Operations e-services actuating",
     "author": "Lakin, Oberbrunner and Harvey",
@@ -68,6 +70,7 @@ describe('addition of a new note', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -84,27 +87,24 @@ describe('addition of a new note', () => {
     expect(blog).toMatchObject(newBlog)
   })
 
-  test('should succeed and result in blog containing user object', async () => {
+  test('should succeed and result in a blog containing user object, and the user object should be the same one as the one authenticated', async () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
     const blogs = response.body
 
-    expect(blogs).toHaveLength(helper.initialBlogs.length + 1)
-
-    // beware of the types, using wrong type may result an error
-    expect(blogs).toEqual(
-      expect.arrayContaining([expect.objectContaining(newBlog)])
-    )
-
     const blog = _.find(blogs, newBlog)
     expect(blog).toMatchObject(newBlog)
 
-    expect(blog).toHaveProperty('user')
+    const user = { ...helper.initialUser }
+    delete user.password
+
+    expect(blog.user).toMatchObject(user)
   })
 
   test('should return status 400 when form is missing title', async () => {
@@ -113,7 +113,7 @@ describe('addition of a new note', () => {
       "url": "https://cayla.com",
       "likes": 452
     }
-    const response = await api.post('/api/blogs').send(blogNoTitle)
+    const response = await api.post('/api/blogs').send(blogNoTitle).set('Authorization', `Bearer ${token}`)
 
     expect(response.statusCode).toEqual(400)
   })
@@ -124,9 +124,38 @@ describe('addition of a new note', () => {
       "author": "Lakin, Oberbrunner and Harvey",
       "likes": 452
     }
-    const response = await api.post('/api/blogs').send(blogNoUrl)
+    const response = await api.post('/api/blogs').send(blogNoUrl).set('Authorization', `Bearer ${token}`)
 
     expect(response.statusCode).toEqual(400)
+  })
+})
+
+describe('addition of a new note when user is not authenticated', () => {
+  const newBlog = {
+    "title": "Frozen Operations e-services actuating",
+    "author": "Lakin, Oberbrunner and Harvey",
+    "url": "https://cayla.com",
+    "likes": 452
+  }
+
+  test('should fail even with valid data', async () => {
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+    const blog = _.find(blogs, newBlog)
+
+    expect(blogs).toHaveLength(helper.initialBlogs.length)
+
+    // beware of the types, using wrong type may result an error
+    expect(blogs).not.toEqual(
+      expect.arrayContaining([expect.objectContaining(newBlog)])
+    )
+    expect(blog).toBeUndefined()
   })
 })
 
