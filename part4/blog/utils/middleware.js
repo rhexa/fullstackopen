@@ -13,12 +13,16 @@ const unknownEndpoint = (request, response) => {
 }
 
 const authenticateToken = (request, response, next) => {
-  
-  const decodedToken = decodeToken(getToken(request))
+  const decodedToken = decodeToken(request.token)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
 
+  next()
+}
+
+const tokenExtractor = (request, response, next) => {
+  request.token = getToken(request)
   next()
 }
 
@@ -40,5 +44,6 @@ module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  authenticateToken
+  authenticateToken,
+  tokenExtractor
 }

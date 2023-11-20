@@ -11,7 +11,7 @@ router.get('/', async (request, response) => {
 
 router.post('/', authenticateToken, async (request, response) => {
   const {title, author, url, likes} = request.body
-  const decodedToken = decodeToken(getToken(request))
+  const decodedToken = decodeToken(request.token)
   
   const user = await User.findById(decodedToken.id)
 
