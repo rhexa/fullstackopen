@@ -159,17 +159,57 @@ describe('addition of a new note when user is not authenticated', () => {
   })
 })
 
-describe('deletion of a blog', () => {
-  test('should return 204 when the blog is successfully deleted', async () => {
+describe('deletion of a blog when authenticated', () => {
+  test('should succeed with status code 204 when the token owner is the same as the blog owner', async () => {
     const blogBefore = await helper.blogsInDb()
     const blogToDelete = blogBefore[0]
-    await api.delete('/api/blogs/' + blogToDelete.id).expect(204)
+    await api.delete('/api/blogs/' + blogToDelete.id)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204)
 
     const blogAfter = await helper.blogsInDb()
 
     expect(blogAfter).toHaveLength(blogBefore.length - 1)
 
     expect(blogAfter).not.toEqual(
+      expect.arrayContaining([expect.objectContaining(blogToDelete)])
+    )
+  })
+
+  test('should fail with status code 403 when the token given does not match the blog owner', async () => {
+    const dummyUser = helper.initialUser
+    dummyUser.username = "dummy"
+    await helper.registerUser(api, dummyUser)
+    const localToken = await helper.login(api, dummyUser)
+
+    const blogBefore = await helper.blogsInDb()
+    const blogToDelete = blogBefore[0]
+    await api.delete('/api/blogs/' + blogToDelete.id)
+      .set('Authorization', `Bearer ${localToken}`)
+      .expect(403)
+
+    const blogAfter = await helper.blogsInDb()
+
+    expect(blogAfter).toHaveLength(blogBefore.length)
+
+    expect(blogAfter).toEqual(
+      expect.arrayContaining([expect.objectContaining(blogToDelete)])
+    )
+  })
+})
+
+describe('deletion of a blog when not authenticated', () => {
+  test('should fail with status code 401', async () => {
+    const blogBefore = await helper.blogsInDb()
+    const blogToDelete = blogBefore[0]
+    await api.delete('/api/blogs/' + blogToDelete.id)
+      .expect(401)
+
+    const blogAfter = await helper.blogsInDb()
+
+    expect(blogAfter).toHaveLength(blogBefore.length)
+
+    expect(blogAfter).toEqual(
       expect.arrayContaining([expect.objectContaining(blogToDelete)])
     )
   })

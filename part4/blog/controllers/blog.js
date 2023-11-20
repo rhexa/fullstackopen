@@ -30,9 +30,21 @@ router.post('/', authenticateToken, async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-router.delete('/:id', async (request, response) => {
-  const result = await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).json(result)
+router.delete('/:id', authenticateToken, async (request, response) => {
+  const decodedToken = decodeToken(request.token)
+  
+  const blogToDelete = await Blog.findById(request.params.id)
+  
+  if (decodedToken.id.toString() === blogToDelete.user.toString()) {
+    const user = await User.findById(decodedToken.id)
+    const deletedBlog = await Blog.findByIdAndDelete(blogToDelete._id.toString())
+    user.blogs = user.blogs.filter( b => b.toString() !== blogToDelete._id.toString() ) 
+    await user.save()
+    response.status(204).json(deletedBlog)
+  } else {
+    response.status(403).json({ error: "You don't have permission to perform the request" })
+  }
+  
 })
 
 router.put('/:id', async (request, response) => {

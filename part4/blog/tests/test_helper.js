@@ -28,6 +28,7 @@ const initialUser = {
   name: 'whatever',
   password: "sekret"
 }
+
 const nonExistingId = async () => {
   const blog = new Blog({ content: 'willremovethissoon' })
   await blog.save()
@@ -46,12 +47,16 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
-const login = async (api) => {
-  const cred = {...initialUser}
+const login = async (api, user) => {
+  const cred = user || {...initialUser}
   delete cred.name
   
   const res = await api.post('/api/login').send(cred)
   return res.body.token
+}
+
+const registerUser = async (api, user) => {
+  await api.post('/api/users').send(user).expect(201)
 }
 
 const beforeEach = async () => {
@@ -84,5 +89,6 @@ module.exports = {
   blogsInDb,
   usersInDb,
   beforeEach,
-  login
+  login,
+  registerUser
 }
