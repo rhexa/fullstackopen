@@ -58,6 +58,7 @@ describe('when there is initially some blogs saved', () => {
   })
 })
 
+// tests with token based authentication
 describe('addition of a new note when user is authenticated', () => {
   const newBlog = {
     "title": "Frozen Operations e-services actuating",
@@ -138,6 +139,7 @@ describe('addition of a new note when user is not authenticated', () => {
     "likes": 452
   }
 
+  // return 401 when token is not provided
   test('should fail even with valid data', async () => {
     await api
       .post('/api/blogs')
