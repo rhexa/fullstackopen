@@ -1,5 +1,7 @@
 const logger = require('./logger')
-const {getToken,decodeToken} = require('./token_helper');
+const {getToken,decodeToken,getUserId} = require('./token_helper')
+const User = require('../models/user')
+
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
   logger.info('Path:  ', request.path)
@@ -26,6 +28,14 @@ const tokenExtractor = (request, response, next) => {
   next()
 }
 
+const userExtractor = async (request, response, next) => {
+  const userId = getUserId(request)
+  if (userId) {
+    request.user = await User.findById(userId)
+  }
+  next()
+}
+
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
 
@@ -45,5 +55,6 @@ module.exports = {
   unknownEndpoint,
   errorHandler,
   authenticateToken,
-  tokenExtractor
+  tokenExtractor,
+  userExtractor
 }

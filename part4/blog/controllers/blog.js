@@ -11,9 +11,8 @@ router.get('/', async (request, response) => {
 
 router.post('/', authenticateToken, async (request, response) => {
   const {title, author, url, likes} = request.body
-  const decodedToken = decodeToken(request.token)
   
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   const blog = new Blog({
     title,
@@ -36,7 +35,7 @@ router.delete('/:id', authenticateToken, async (request, response) => {
   const blogToDelete = await Blog.findById(request.params.id)
   
   if (decodedToken.id.toString() === blogToDelete.user.toString()) {
-    const user = await User.findById(decodedToken.id)
+    const user = request.user
     const deletedBlog = await Blog.findByIdAndDelete(blogToDelete._id.toString())
     user.blogs = user.blogs.filter( b => b.toString() !== blogToDelete._id.toString() ) 
     await user.save()
