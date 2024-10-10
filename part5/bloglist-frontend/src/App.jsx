@@ -11,7 +11,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -29,7 +29,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setMessage({type: 'error', value: 'Wrong credentials'})
     }
   }
 
@@ -75,8 +75,10 @@ const App = () => {
       const response = await blogService.create(newBlog)
       setIsLoading(false)
       setNewBlog({ title: '', author: '', url: '', likes: 0 })
+      setMessage({type: 'success', value: `a new blog ${response.title} by ${response.author} added`})
     } catch (error) {
       console.log(error)
+      setMessage({type: 'error', value: error.response.data.error || error.message})
     }
   }
 
@@ -135,8 +137,8 @@ const App = () => {
       <div>
         <h2>log in to application</h2>
 
-        {errorMessage &&
-          <Notification type="error" timeout={5} hook={setErrorMessage} message={errorMessage} />
+        {message &&
+          <Notification type={message.type} timeout={5} hook={setMessage} message={message.value} />
         }
 
         {loginForm()}
@@ -148,8 +150,8 @@ const App = () => {
     <div>
       <h1>blogs</h1>
 
-      {errorMessage &&
-        <Notification type="error" timeout={5} hook={setErrorMessage} message={errorMessage} />
+      {message &&
+        <Notification type={message.type} timeout={5} hook={setMessage} message={message.value} />
       }
       <div style={{display: 'flex', flexDirection: 'row'}}>
         <p>{user.name} logged in</p>
