@@ -6,9 +6,11 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '', likes: 0 })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
 
   const handleLogin = async (event) => {
@@ -60,18 +62,71 @@ const App = () => {
     </form>
   )
 
+  const fetchBlogs = async () => {
+    const blogs = await blogService.getAll()
+    setBlogs(blogs)
+  }
+
+  const addBlog = async (event) => {
+    event.preventDefault()
+
+    try {
+      setIsLoading(true)
+      const response = await blogService.create(newBlog)
+      setIsLoading(false)
+      setNewBlog({ title: '', author: '', url: '', likes: 0 })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const blogForm = () => (
+    <>
+      <h2>create new</h2>
+      <form onSubmit={addBlog}>
+        <div>
+          title
+          <input
+            type="text"
+            value={newBlog.title}
+            name="Title"
+            onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
+          />
+        </div>
+        <div>
+          author
+          <input
+            type="text"
+            value={newBlog.author}
+            name="Author"
+            onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
+            />
+        </div>
+        <div>
+          url
+          <input
+            type="text"
+            value={newBlog.url}
+            name="Url"
+            onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
+          />
+        </div>
+        <button type="submit">create</button>
+      </form>
+    </>
+  )
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+    if (!isLoading) {
+      fetchBlogs()
+    }
+  }, [isLoading])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      // noteService.setToken(user.token)
     }
   }, [])
 
@@ -91,7 +146,7 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+      <h1>blogs</h1>
 
       {errorMessage &&
         <Notification type="error" timeout={5} hook={setErrorMessage} message={errorMessage} />
@@ -101,6 +156,7 @@ const App = () => {
         <button style={{margin: 'auto 1em', height: '2em'}} onClick={handleLogout}>logout</button>
       </div>
 
+      {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
