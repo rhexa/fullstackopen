@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
@@ -69,7 +70,37 @@ const App = () => {
     setBlogs(blogs)
   }
 
-  const addBlog = async (event) => {
+  const handleNewBlogChange = (state, action) => {
+    switch (action.type) {
+      case 'changed_title':
+        setNewBlog({
+          ...state,
+          title: action.value
+        });
+        break;
+      case 'changed_author':
+        setNewBlog({
+          ...state,
+          author: action.value
+        });
+        break;
+      case 'changed_url':
+        setNewBlog({
+          ...state,
+          url: action.value
+        });
+        break;
+      case 'changed_likes':
+        setNewBlog({
+          ...state,
+          likes: action.value
+        });
+        break;
+      default:
+        break;
+    }
+  }
+  const handleBlogSubmit = async (event) => {
     event.preventDefault()
 
     try {
@@ -83,44 +114,6 @@ const App = () => {
       console.log(error)
       setMessage({type: 'error', value: error.response.data.error || error.message})
     }
-  }
-
-  const blogForm = () => {
-    return (
-      <>
-        <h2>create new</h2>
-        <form onSubmit={addBlog}>
-          <div>
-            title
-            <input
-              type="text"
-              value={newBlog.title}
-              name="Title"
-              onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
-            />
-          </div>
-          <div>
-            author
-            <input
-              type="text"
-              value={newBlog.author}
-              name="Author"
-              onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
-              />
-          </div>
-          <div>
-            url
-            <input
-              type="text"
-              value={newBlog.url}
-              name="Url"
-              onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
-            />
-          </div>
-          <button type="submit">create</button>
-        </form>
-      </>
-    )
   }
 
   useEffect(() => {
@@ -164,7 +157,7 @@ const App = () => {
       </div>
 
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        {blogForm()}
+        <BlogForm handleSubmit={handleBlogSubmit} handleNewBlogChange={handleNewBlogChange} newBlog={newBlog} />
       </Togglable>
 
       {blogs.map(blog =>
