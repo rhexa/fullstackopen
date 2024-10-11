@@ -15,6 +15,16 @@ const Togglable = forwardRef((props, refs) => {
     }
   })
 
+  if ( props.type === "2" ) {
+    return (
+      <div>
+        <div style={showWhenVisible}>
+          {props.children}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div style={hideWhenVisible}>
