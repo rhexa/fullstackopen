@@ -132,6 +132,20 @@ const App = () => {
     }
   }
 
+  const handleBlogRemove = async (event, blog) => {
+    event.preventDefault()
+    const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+    if (!confirm) return
+
+    try {
+      const response = await blogService.remove(blog.id)
+      setBlogs(blogs.filter((b) => b.id !== blog.id))
+    } catch (error) {
+      console.log(error)
+      setMessage({ type: 'error', value: error.response.data.error || error.message })
+    }
+  }
+
   const handleSortChange = (event) => {
     setSort(event.target.value)
   }
@@ -207,7 +221,7 @@ const App = () => {
       </div>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleBlogRemove={handleBlogRemove} />
       )}
 
     </div>
