@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import Togglable from "./Togglable"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLike }) => {
   const blogRef = useRef()
   const [detailVisible, setDetailVisible] = useState(false)
 
@@ -30,7 +30,7 @@ const Blog = ({ blog }) => {
         </div>
         <div>
           likes {blog.likes}
-          <button onClick={(e) => e.preventDefault()}>like</button>
+          <button onClick={(e) => handleLike(e, blog)}>like</button>
         </div>
       </Togglable>
     </div>

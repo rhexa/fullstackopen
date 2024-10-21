@@ -32,7 +32,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessage({type: 'error', value: 'Wrong credentials'})
+      setMessage({ type: 'error', value: 'Wrong credentials' })
     }
   }
 
@@ -100,6 +100,7 @@ const App = () => {
         break;
     }
   }
+
   const handleBlogSubmit = async (event) => {
     event.preventDefault()
 
@@ -109,10 +110,24 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       setIsLoading(false)
       setNewBlog({ title: '', author: '', url: '', likes: 0 })
-      setMessage({type: 'success', value: `a new blog ${response.title} by ${response.author} added`})
+      setMessage({ type: 'success', value: `a new blog ${response.title} by ${response.author} added` })
     } catch (error) {
       console.log(error)
-      setMessage({type: 'error', value: error.response.data.error || error.message})
+      setMessage({ type: 'error', value: error.response.data.error || error.message })
+    }
+  }
+
+  const handleLike = async (event, blog) => {
+    event.preventDefault()
+    const likedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
+
+    try {
+      setIsLoading(true)
+      const response = await blogService.update(likedBlog.id, likedBlog)
+      setIsLoading(false)
+    } catch (error) {
+      console.log(error)
+      setMessage({ type: 'error', value: error.response.data.error || error.message })
     }
   }
 
@@ -144,6 +159,7 @@ const App = () => {
     )
   }
 
+  // When user is logged in, render this component (User dashboard)
   return (
     <div>
       <h1>blogs</h1>
@@ -151,9 +167,9 @@ const App = () => {
       {message &&
         <Notification type={message.type} timeout={5} hook={setMessage} message={message.value} />
       }
-      <div style={{display: 'flex', flexDirection: 'row'}}>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
         <p>{user.name} logged in</p>
-        <button style={{margin: 'auto 1em', height: '2em'}} onClick={handleLogout}>logout</button>
+        <button style={{ margin: 'auto 1em', height: '2em' }} onClick={handleLogout}>logout</button>
       </div>
 
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
@@ -161,7 +177,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
       )}
 
     </div>
