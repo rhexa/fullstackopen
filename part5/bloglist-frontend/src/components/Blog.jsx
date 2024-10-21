@@ -32,6 +32,9 @@ const Blog = ({ blog, handleLike }) => {
           likes {blog.likes}
           <button onClick={(e) => handleLike(e, blog)}>like</button>
         </div>
+        <div>
+          {blog.user.username}
+        </div>
       </Togglable>
     </div>
   )
