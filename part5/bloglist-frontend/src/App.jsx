@@ -14,6 +14,7 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState(null)
+  const [sort, setSort] = useState('none')
   const blogFormRef = useRef()
 
   const handleLogin = async (event) => {
@@ -131,11 +132,32 @@ const App = () => {
     }
   }
 
+  const handleSortChange = (event) => {
+    setSort(event.target.value)
+  }
+
+  const sortBlogs = (sort) => {
+    switch (sort) {
+      case 'default':
+        fetchBlogs()
+        break
+      case 'likes':
+        setBlogs([...blogs].sort((a, b) => b.likes - a.likes))
+        break
+      default:
+        break
+    }
+  }
+
   useEffect(() => {
     if (!isLoading) {
       fetchBlogs()
     }
   }, [isLoading])
+
+  useEffect(() => {
+    sortBlogs(sort)
+  }, [sort])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -175,6 +197,14 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm handleSubmit={handleBlogSubmit} handleNewBlogChange={handleNewBlogChange} newBlog={newBlog} />
       </Togglable>
+
+      <div>
+        <label htmlFor="sort-blogs">sort by:</label>
+        <select name="sort-blogs" onChange={handleSortChange}>
+          <option value="default">default</option>
+          <option value="likes">likes</option>
+        </select>
+      </div>
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} handleLike={handleLike} />
