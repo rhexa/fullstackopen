@@ -22,9 +22,10 @@ describe('Blog component', () => {
   localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
 
   let container;
+  const likeHandler = vi.fn();
 
   beforeEach(() => {
-    container = render(<Blog blog={blog} />).container;
+    container = render(<Blog blog={blog} handleLike={likeHandler} />).container;
   })
 
   test('renders blog title and author', () => {
@@ -55,11 +56,22 @@ describe('Blog component', () => {
     const ue = userEvent.setup();
     const viewButton = screen.getByText('view');
     await ue.click(viewButton);
-
+    
     // expect blog URL and likes are children of togglableContent and are displayed
     const div = container.querySelector('.togglableContent');
     expect(div).not.toHaveStyle('display: none');
     expect(div).toHaveTextContent(blog.url);
     expect(div).toHaveTextContent(`likes ${blog.likes}`);
+  });
+  
+  test('calls like event handler twice when like button is clicked twice', async () => {
+    const ue = userEvent.setup();
+    const viewButton = screen.getByText('view');
+    await ue.click(viewButton);
+
+    const likeButton = screen.getByText('like');
+    await ue.click(likeButton);
+    await ue.click(likeButton);
+    expect(likeHandler.mock.calls).toHaveLength(2);
   });
 });
