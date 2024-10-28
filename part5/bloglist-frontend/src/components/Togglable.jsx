@@ -19,7 +19,7 @@ const Togglable = forwardRef((props, refs) => {
   if ( props.type === '2' ) {
     return (
       <div>
-        <div style={showWhenVisible}>
+        <div style={showWhenVisible} className='togglableContent'>
           {props.children}
         </div>
       </div>

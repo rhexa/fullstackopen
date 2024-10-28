@@ -30,7 +30,8 @@ const Blog = ({ blog, handleLike, handleBlogRemove }) => {
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title} {blog.author}
+        <h2 className='blog-title'>{blog.title}</h2>
+        <p className='blog-author'>{blog.author}</p>
         <button onClick={() => toggleDetailVisibility()}>{detailVisible ? 'hide' : 'view'}</button>
       </div>
       <Togglable buttonLabel="view" type="2" ref={blogRef}>
