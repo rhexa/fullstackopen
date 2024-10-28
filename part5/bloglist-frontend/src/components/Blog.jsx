@@ -1,5 +1,5 @@
-import { useRef, useState } from "react"
-import Togglable from "./Togglable"
+import { useRef, useState } from 'react'
+import Togglable from './Togglable'
 
 const Blog = ({ blog, handleLike, handleBlogRemove }) => {
   const blogRef = useRef()
@@ -31,7 +31,7 @@ const Blog = ({ blog, handleLike, handleBlogRemove }) => {
     <div style={blogStyle}>
       <div>
         {blog.title} {blog.author}
-        <button onClick={() => toggleDetailVisibility()}>{detailVisible ? "hide" : "view"}</button>
+        <button onClick={() => toggleDetailVisibility()}>{detailVisible ? 'hide' : 'view'}</button>
       </div>
       <Togglable buttonLabel="view" type="2" ref={blogRef}>
         <div>

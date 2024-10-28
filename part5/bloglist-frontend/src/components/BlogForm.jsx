@@ -1,4 +1,4 @@
-const blogForm = ({ 
+const blogForm = ({
   handleSubmit,
   handleNewBlogChange,
   newBlog

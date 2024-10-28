@@ -18,12 +18,12 @@ const Timeout = ({ delay, children, hook }) => {
     setVisible(false)
     hook(null)
   }
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTimeout(true)
     }, 250)
-    return ()=>clearTimeout(timer)
+    return () => clearTimeout(timer)
   }, [delay])
 
   if (visible) return (

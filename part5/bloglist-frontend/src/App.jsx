@@ -73,32 +73,32 @@ const App = () => {
 
   const handleNewBlogChange = (state, action) => {
     switch (action.type) {
-      case 'changed_title':
-        setNewBlog({
-          ...state,
-          title: action.value
-        });
-        break;
-      case 'changed_author':
-        setNewBlog({
-          ...state,
-          author: action.value
-        });
-        break;
-      case 'changed_url':
-        setNewBlog({
-          ...state,
-          url: action.value
-        });
-        break;
-      case 'changed_likes':
-        setNewBlog({
-          ...state,
-          likes: action.value
-        });
-        break;
-      default:
-        break;
+    case 'changed_title':
+      setNewBlog({
+        ...state,
+        title: action.value
+      })
+      break
+    case 'changed_author':
+      setNewBlog({
+        ...state,
+        author: action.value
+      })
+      break
+    case 'changed_url':
+      setNewBlog({
+        ...state,
+        url: action.value
+      })
+      break
+    case 'changed_likes':
+      setNewBlog({
+        ...state,
+        likes: action.value
+      })
+      break
+    default:
+      break
     }
   }
 
@@ -152,14 +152,14 @@ const App = () => {
 
   const sortBlogs = (sort) => {
     switch (sort) {
-      case 'default':
-        fetchBlogs()
-        break
-      case 'likes':
-        setBlogs([...blogs].sort((a, b) => b.likes - a.likes))
-        break
-      default:
-        break
+    case 'default':
+      fetchBlogs()
+      break
+    case 'likes':
+      setBlogs([...blogs].sort((a, b) => b.likes - a.likes))
+      break
+    default:
+      break
     }
   }
 
@@ -171,6 +171,7 @@ const App = () => {
 
   useEffect(() => {
     sortBlogs(sort)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort])
 
   useEffect(() => {
