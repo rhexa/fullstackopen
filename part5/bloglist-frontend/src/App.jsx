@@ -8,7 +8,6 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '', likes: 0 })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -71,46 +70,12 @@ const App = () => {
     setBlogs(blogs)
   }
 
-  const handleNewBlogChange = (state, action) => {
-    switch (action.type) {
-    case 'changed_title':
-      setNewBlog({
-        ...state,
-        title: action.value
-      })
-      break
-    case 'changed_author':
-      setNewBlog({
-        ...state,
-        author: action.value
-      })
-      break
-    case 'changed_url':
-      setNewBlog({
-        ...state,
-        url: action.value
-      })
-      break
-    case 'changed_likes':
-      setNewBlog({
-        ...state,
-        likes: action.value
-      })
-      break
-    default:
-      break
-    }
-  }
-
-  const handleBlogSubmit = async (event) => {
-    event.preventDefault()
-
+  const handleBlogSubmit = async (newBlog) => {
     try {
       setIsLoading(true)
       const response = await blogService.create(newBlog)
       blogFormRef.current.toggleVisibility()
       setIsLoading(false)
-      setNewBlog({ title: '', author: '', url: '', likes: 0 })
       setMessage({ type: 'success', value: `a new blog ${response.title} by ${response.author} added` })
     } catch (error) {
       console.log(error)
@@ -210,7 +175,7 @@ const App = () => {
       </div>
 
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm handleSubmit={handleBlogSubmit} handleNewBlogChange={handleNewBlogChange} newBlog={newBlog} />
+        <BlogForm handleSubmit={handleBlogSubmit} />
       </Togglable>
 
       <div>
