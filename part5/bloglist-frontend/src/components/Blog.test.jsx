@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 import Blog from './Blog';
 import { beforeEach } from 'vitest';
 
@@ -48,5 +49,17 @@ describe('Blog component', () => {
     // expect blog likes is a child of togglableContent and is not displayed
     expect(div).toHaveTextContent(`likes ${blog.likes}`);
     expect(div).toHaveStyle('display: none');
+  });
+
+  test('shows blog URL and likes when view button is clicked', async () => {
+    const ue = userEvent.setup();
+    const viewButton = screen.getByText('view');
+    await ue.click(viewButton);
+
+    // expect blog URL and likes are children of togglableContent and are displayed
+    const div = container.querySelector('.togglableContent');
+    expect(div).not.toHaveStyle('display: none');
+    expect(div).toHaveTextContent(blog.url);
+    expect(div).toHaveTextContent(`likes ${blog.likes}`);
   });
 });
