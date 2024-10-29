@@ -115,9 +115,33 @@ describe('Blog app', () => {
         }
       });
       await page.getByRole('button', { name: 'remove' }).click()
-      
-      const lblogTitle = await page.locator('h2[class="blog-title"]').getByText(testBlog.title).waitFor({state: 'detached'})
+
+      const lblogTitle = await page.locator('h2[class="blog-title"]').getByText(testBlog.title).waitFor({ state: 'detached' })
       await expect(lblogTitle).toBeFalsy()
+    })
+
+    // Make a test that ensures that only the user who added the blog sees the blog's delete button
+    test('only the user who added the blog can delete the blog', async ({ page, request }) => {
+      const testUser2 = {
+        name: 'Test User 2',
+        username: 'testuser2',
+        password: 'testpassword2',
+      }
+
+      await request.post('http://localhost:3003/api/users', {
+        data: testUser2
+      })
+
+      await createBlog(page, testBlog)
+      await page.getByRole('heading').getByText(testBlog.title).waitFor()
+
+      await page.getByRole('button', { name: 'logout' }).click()
+      await loginWith(page, testUser2.username, testUser2.password)
+
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.locator('h2[class="blog-title"]').getByText(testBlog.title).waitFor()
+      const lremoveButton = await page.getByRole('button', { name: 'remove' }).waitFor({ state: 'detached' })
+      await expect(lremoveButton).toBeFalsy
     })
   })
 })
