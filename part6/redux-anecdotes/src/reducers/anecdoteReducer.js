@@ -33,6 +33,9 @@ const reducer = (state = initialState, action) => {
       }
       return state.map(a => a.id === id ? voted : a)
     }
+    case 'NEW_ANECDOTE': {
+      return [...state, asObject(action.data.content)]
+    }
     default: return state
   }
 }
