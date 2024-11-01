@@ -8,15 +8,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </Provider>
 )
-// const root = ReactDOM.createRoot(document.getElementById('root'))
-
-// const renderApp = () => {
-//   root.render(
-//     <Provider store={store}>
-//       <App />
-//     </Provider>
-//   )
-// }
-
-// renderApp()
-// store.subscribe(renderApp)
