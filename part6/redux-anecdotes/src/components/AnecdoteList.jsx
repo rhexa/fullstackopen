@@ -10,10 +10,10 @@ const AnecdoteList = () => {
     return filter ? sortedAnecdotes.filter(a => a.content.toLowerCase().includes(filter.toLowerCase())) : sortedAnecdotes
   })
 
-  const handleVote = ({ id, content }) => {
-    console.log('vote', id)
-    dispatch(vote(id))
-    dispatch(setNotification(`you voted '${content}'`))
+  const handleVote = (anecdote) => {
+    console.log('vote', anecdote.id)
+    dispatch(vote(anecdote))
+    dispatch(setNotification(`you voted '${anecdote.content}'`))
   }
 
   return (
