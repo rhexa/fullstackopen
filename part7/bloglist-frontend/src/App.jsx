@@ -5,6 +5,11 @@ import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useDispatch } from 'react-redux'
+import {
+  setSuccessNotification,
+  setErrorNotification,
+} from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,9 +17,10 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState(null)
   const [sort, setSort] = useState('none')
   const blogFormRef = useRef()
+
+  const dispatch = useDispatch()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -31,7 +37,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessage({ type: 'error', value: 'Wrong credentials' })
+      dispatch(setErrorNotification('Wrong credentials'))
     }
   }
 
@@ -75,16 +81,14 @@ const App = () => {
       const response = await blogService.create(newBlog)
       blogFormRef.current.toggleVisibility()
       setIsLoading(false)
-      setMessage({
-        type: 'success',
-        value: `a new blog ${response.title} by ${response.author} added`,
-      })
+      dispatch(
+        setSuccessNotification(
+          `a new blog ${response.title} by ${response.author} added`
+        )
+      )
     } catch (error) {
       console.log(error)
-      setMessage({
-        type: 'error',
-        value: error.response.data.error || error.message,
-      })
+      dispatch(setErrorNotification(error.response.data.error || error.message))
     }
   }
 
@@ -98,10 +102,7 @@ const App = () => {
       setIsLoading(false)
     } catch (error) {
       console.log(error)
-      setMessage({
-        type: 'error',
-        value: error.response.data.error || error.message,
-      })
+      dispatch(setErrorNotification(error.response.data.error || error.message))
     }
   }
 
@@ -117,10 +118,7 @@ const App = () => {
       setBlogs(blogs.filter((b) => b.id !== blog.id))
     } catch (error) {
       console.log(error)
-      setMessage({
-        type: 'error',
-        value: error.response.data.error || error.message,
-      })
+      dispatch(setErrorNotification(error.response.data.error || error.message))
     }
   }
 
@@ -164,16 +162,7 @@ const App = () => {
     return (
       <div>
         <h2>log in to application</h2>
-
-        {message && (
-          <Notification
-            type={message.type}
-            timeout={5}
-            hook={setMessage}
-            message={message.value}
-          />
-        )}
-
+        <Notification />
         {loginForm()}
       </div>
     )
@@ -184,14 +173,8 @@ const App = () => {
     <div>
       <h1>blogs</h1>
 
-      {message && (
-        <Notification
-          type={message.type}
-          timeout={5}
-          hook={setMessage}
-          message={message.value}
-        />
-      )}
+      <Notification />
+
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <p>{user.name} logged in</p>
         <button
