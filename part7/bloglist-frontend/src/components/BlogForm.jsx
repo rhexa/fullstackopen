@@ -1,48 +1,34 @@
 import { useState } from 'react'
+import useInput from '../hooks/useInput'
+import { useDispatch } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
+import { setSuccessNotification } from '../reducers/notificationReducer'
 
-const BlogForm = ({ handleSubmit }) => {
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: '',
-    likes: 0,
-  })
+const BlogForm = ({ toggleVisibility }) => {
+  const { reset: titleReset, ...title } = useInput('text')
+  const { reset: authorReset, ...author } = useInput('text')
+  const { reset: urlReset, ...url } = useInput('text')
+  const dispatch = useDispatch()
 
-  const handleNewBlogChange = (state, action) => {
-    switch (action.type) {
-      case 'changed_title':
-        setNewBlog({
-          ...state,
-          title: action.value,
-        })
-        break
-      case 'changed_author':
-        setNewBlog({
-          ...state,
-          author: action.value,
-        })
-        break
-      case 'changed_url':
-        setNewBlog({
-          ...state,
-          url: action.value,
-        })
-        break
-      case 'changed_likes':
-        setNewBlog({
-          ...state,
-          likes: action.value,
-        })
-        break
-      default:
-        break
-    }
+  const reset = () => {
+    titleReset()
+    authorReset()
+    urlReset()
   }
 
   const addBlog = (event) => {
     event.preventDefault()
-    handleSubmit(newBlog)
-    setNewBlog({ title: '', author: '', url: '', likes: 0 })
+
+    const newBlog = {
+      title: title.value,
+      author: author.value,
+      url: url.value,
+      likes: 0,
+    }
+
+    dispatch(createBlog(newBlog))
+    reset()
+    toggleVisibility()
   }
 
   return (
@@ -51,48 +37,15 @@ const BlogForm = ({ handleSubmit }) => {
       <form onSubmit={addBlog}>
         <div>
           title
-          <input
-            type="text"
-            value={newBlog.title}
-            name="Title"
-            placeholder="Blog title"
-            onChange={({ target }) =>
-              handleNewBlogChange(newBlog, {
-                type: 'changed_title',
-                value: target.value,
-              })
-            }
-          />
+          <input {...title} />
         </div>
         <div>
           author
-          <input
-            type="text"
-            value={newBlog.author}
-            name="Author"
-            placeholder="Blog author"
-            onChange={({ target }) =>
-              handleNewBlogChange(newBlog, {
-                type: 'changed_author',
-                value: target.value,
-              })
-            }
-          />
+          <input {...author} />
         </div>
         <div>
           url
-          <input
-            type="text"
-            value={newBlog.url}
-            name="Url"
-            placeholder="Blog url"
-            onChange={({ target }) =>
-              handleNewBlogChange(newBlog, {
-                type: 'changed_url',
-                value: target.value,
-              })
-            }
-          />
+          <input {...url} />
         </div>
         <button type="submit">create</button>
       </form>

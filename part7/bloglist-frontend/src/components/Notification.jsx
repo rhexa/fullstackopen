@@ -8,7 +8,6 @@ const Notification = () => {
 
   useEffect(() => {
     if (!notification) return
-    console.log('notification: ', notification)
     const timeout = setTimeout(() => {
       dispatch(clearNotification())
     }, 5000)
