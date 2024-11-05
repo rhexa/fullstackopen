@@ -1,9 +1,12 @@
 import { useRef, useState } from 'react'
 import Togglable from './Togglable'
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { useDispatch } from 'react-redux'
 
-const Blog = ({ blog, handleLike, handleBlogRemove }) => {
+const Blog = ({ blog }) => {
   const blogRef = useRef()
   const [detailVisible, setDetailVisible] = useState(false)
+  const dispatch = useDispatch()
 
   const toggleDetailVisibility = () => {
     setDetailVisible(!detailVisible)
@@ -25,6 +28,21 @@ const Blog = ({ blog, handleLike, handleBlogRemove }) => {
     borderRadius: 5,
     padding: 10,
     cursor: 'pointer',
+  }
+
+  const handleLike = async (event, blog) => {
+    event.preventDefault()
+    dispatch(likeBlog(blog))
+  }
+
+  const handleBlogRemove = async (event, blog) => {
+    event.preventDefault()
+    const confirm = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}?`
+    )
+    if (!confirm) return
+
+    dispatch(removeBlog(blog))
   }
 
   return (

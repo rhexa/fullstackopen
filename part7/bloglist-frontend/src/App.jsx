@@ -74,34 +74,6 @@ const App = () => {
     </form>
   )
 
-  const handleLike = async (event, blog) => {
-    event.preventDefault()
-    const likedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
-
-    try {
-      const response = await blogService.update(likedBlog.id, likedBlog)
-    } catch (error) {
-      console.log(error)
-      dispatch(setErrorNotification(error.response.data.error || error.message))
-    }
-  }
-
-  const handleBlogRemove = async (event, blog) => {
-    event.preventDefault()
-    const confirm = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author}?`
-    )
-    if (!confirm) return
-
-    try {
-      const response = await blogService.remove(blog.id)
-      setBlogs(blogs.filter((b) => b.id !== blog.id))
-    } catch (error) {
-      console.log(error)
-      dispatch(setErrorNotification(error.response.data.error || error.message))
-    }
-  }
-
   const handleSortChange = (event) => {
     setSort(event.target.value)
   }
@@ -160,12 +132,7 @@ const App = () => {
       </div>
 
       {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          handleLike={handleLike}
-          handleBlogRemove={handleBlogRemove}
-        />
+        <Blog key={blog.id} blog={blog} />
       ))}
     </div>
   )
