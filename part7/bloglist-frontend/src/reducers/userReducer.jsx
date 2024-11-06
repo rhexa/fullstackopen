@@ -5,7 +5,7 @@ import { setErrorNotification } from './notificationReducer'
 const initialState = null
 
 const userSlice = createSlice({
-  name: 'user',
+  name: 'loginUser',
   initialState,
   reducers: {
     _setUser: (state, action) => {

@@ -11,6 +11,9 @@ import {
   loginUser,
   logoutUser,
 } from './reducers/userReducer'
+import { Routes, Route } from 'react-router-dom'
+import Navigation from './components/Navigation'
+import Users from './routes/Users'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -70,6 +73,28 @@ const App = () => {
     setSort(event.target.value)
   }
 
+  const Home = () => (
+    <div>
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm
+          toggleVisibility={() => blogFormRef.current.toggleVisibility()}
+        />
+      </Togglable>
+
+      <div>
+        <label htmlFor="sort-blogs">sort by:</label>
+        <select name="sort-blogs" onChange={handleSortChange}>
+          <option value="default">default</option>
+          <option value="likes">likes</option>
+        </select>
+      </div>
+
+      {blogs.map((blog) => (
+        <Blog key={blog.id} blog={blog} />
+      ))}
+    </div>
+  )
+
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [])
@@ -98,6 +123,7 @@ const App = () => {
       <h1>blogs</h1>
 
       <Notification />
+      <Navigation />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <p>{user.name} logged in</p>
@@ -108,24 +134,10 @@ const App = () => {
           logout
         </button>
       </div>
-
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm
-          toggleVisibility={() => blogFormRef.current.toggleVisibility()}
-        />
-      </Togglable>
-
-      <div>
-        <label htmlFor="sort-blogs">sort by:</label>
-        <select name="sort-blogs" onChange={handleSortChange}>
-          <option value="default">default</option>
-          <option value="likes">likes</option>
-        </select>
-      </div>
-
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      <Routes>
+        <Route exact path="/" element={<Home />} />
+        <Route path="/users" element={<Users />} />
+      </Routes>
     </div>
   )
 }
