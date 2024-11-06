@@ -1,16 +1,20 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  TableContainer,
+  Table,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material'
 
 const BlogList = ({ blogs }) => {
   const [sort, setSort] = useState('none')
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
 
   const sortBlogs = () => {
     switch (sort) {
@@ -29,18 +33,33 @@ const BlogList = ({ blogs }) => {
 
   return (
     <>
-      <div>
-        <label htmlFor="sort-blogs">sort by:</label>
-        <select name="sort-blogs" onChange={handleSortChange}>
-          <option value="default">default</option>
-          <option value="likes">likes</option>
-        </select>
-      </div>
-      {sortedBlogs.map((blog) => (
-        <div style={blogStyle} key={blog.id}>
-          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-        </div>
-      ))}
+      <FormControl fullWidth>
+        <InputLabel id="sort-blogs-label">sort by</InputLabel>
+        <Select
+          labelId="sort-blogs-label"
+          id="sort-blogs"
+          value={sort}
+          label="Sort by"
+          onChange={handleSortChange}
+        >
+          <MenuItem value="default">default</MenuItem>
+          <MenuItem value="likes">likes</MenuItem>
+        </Select>
+      </FormControl>
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {sortedBlogs.map((blog) => (
+              <TableRow key={blog.id}>
+                <TableCell>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   )
 }

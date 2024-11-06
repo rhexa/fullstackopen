@@ -3,17 +3,13 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
-import {
-  _logout,
-  _setUser,
-  loginUser,
-  logoutUser,
-} from './reducers/userReducer'
+import { _logout, _setUser, loginUser } from './reducers/userReducer'
 import { Routes, Route, useMatch } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Users from './routes/Users'
 import User from './routes/User'
 import Blogs from './routes/Blogs'
+import { Container } from '@mui/material'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -92,9 +88,9 @@ const App = () => {
 
   // When user is logged in, render this component (User dashboard)
   return (
-    <div>
+    <Container>
       <Navigation />
-      <h1>blogs</h1>
+      <h1>Blogs</h1>
 
       <Notification />
 
@@ -104,7 +100,7 @@ const App = () => {
         <Route path="/users/:id" element={<User userBlogs={userBlogs} />} />
         <Route path="/blogs/:id" element={<Blog blog={blog} />} />
       </Routes>
-    </div>
+    </Container>
   )
 }
 
