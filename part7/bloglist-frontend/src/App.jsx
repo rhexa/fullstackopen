@@ -15,29 +15,27 @@ import { Routes, Route, useMatch } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Users from './routes/Users'
 import User from './routes/User'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [sort, setSort] = useState('none')
   const blogFormRef = useRef()
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user)
 
-  const blogs = useSelector(({ blogs }) => {
-    switch (sort) {
-      case 'likes':
-        return [...blogs].sort((a, b) => b.likes - a.likes)
-      default:
-        return blogs
-    }
-  })
+  const blogs = useSelector(({ blogs }) => blogs)
 
   const users = useSelector((state) => state.users)
 
   const userMatch = useMatch('/users/:id')
   const userBlogs = userMatch
     ? users.filter((user) => user.id === userMatch.params.id)[0]
+    : null
+
+  const blogMatch = useMatch('/blogs/:id')
+  const blog = blogMatch
+    ? blogs.filter((blog) => blog.id === blogMatch.params.id)[0]
     : null
 
   const handleLogin = async (event) => {
@@ -77,10 +75,6 @@ const App = () => {
     </form>
   )
 
-  const handleSortChange = (event) => {
-    setSort(event.target.value)
-  }
-
   const Home = () => (
     <div>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
@@ -89,17 +83,7 @@ const App = () => {
         />
       </Togglable>
 
-      <div>
-        <label htmlFor="sort-blogs">sort by:</label>
-        <select name="sort-blogs" onChange={handleSortChange}>
-          <option value="default">default</option>
-          <option value="likes">likes</option>
-        </select>
-      </div>
-
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      <BlogList blogs={blogs} />
     </div>
   )
 
@@ -146,6 +130,7 @@ const App = () => {
         <Route exact path="/" element={<Home />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User userBlogs={userBlogs} />} />
+        <Route path="/blogs/:id" element={<Blog blog={blog} />} />
       </Routes>
     </div>
   )

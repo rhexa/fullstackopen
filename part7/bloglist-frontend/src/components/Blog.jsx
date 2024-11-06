@@ -4,14 +4,7 @@ import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
 
 const Blog = ({ blog }) => {
-  const blogRef = useRef()
-  const [detailVisible, setDetailVisible] = useState(false)
   const dispatch = useDispatch()
-
-  const toggleDetailVisibility = () => {
-    setDetailVisible(!detailVisible)
-    blogRef.current.toggleVisibility()
-  }
 
   const blogStyle = {
     paddingTop: 10,
@@ -49,31 +42,28 @@ const Blog = ({ blog }) => {
     <div style={blogStyle}>
       <div>
         <h2 className="blog-title">{blog.title}</h2>
-        <p className="blog-author">{blog.author}</p>
-        <button onClick={() => toggleDetailVisibility()}>
-          {detailVisible ? 'hide' : 'view'}
-        </button>
+        <h3 className="blog-author">By: {blog.author}</h3>
       </div>
-      <Togglable buttonLabel="view" type="2" ref={blogRef}>
-        <div>{blog.url}</div>
+      <div>
+        <a href={blog.url}>{blog.url}</a>
+      </div>
+      <div>
+        likes {blog.likes}
+        <button onClick={(e) => handleLike(e, blog)}>like</button>
+      </div>
+      <div>added by {blog.user.username}</div>
+      {blog.user.username ===
+        JSON.parse(window.localStorage.getItem('loggedBlogappUser'))
+          .username && (
         <div>
-          likes {blog.likes}
-          <button onClick={(e) => handleLike(e, blog)}>like</button>
+          <button
+            style={removeButtonStyle}
+            onClick={(e) => handleBlogRemove(e, blog)}
+          >
+            remove
+          </button>
         </div>
-        <div>{blog.user.username}</div>
-        {blog.user.username ===
-          JSON.parse(window.localStorage.getItem('loggedBlogappUser'))
-            .username && (
-          <div>
-            <button
-              style={removeButtonStyle}
-              onClick={(e) => handleBlogRemove(e, blog)}
-            >
-              remove
-            </button>
-          </div>
-        )}
-      </Togglable>
+      )}
     </div>
   )
 }
