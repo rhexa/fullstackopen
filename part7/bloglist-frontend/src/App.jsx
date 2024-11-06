@@ -11,9 +11,10 @@ import {
   loginUser,
   logoutUser,
 } from './reducers/userReducer'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Users from './routes/Users'
+import User from './routes/User'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -31,6 +32,13 @@ const App = () => {
         return blogs
     }
   })
+
+  const users = useSelector((state) => state.users)
+
+  const userMatch = useMatch('/users/:id')
+  const userBlogs = userMatch
+    ? users.filter((user) => user.id === userMatch.params.id)[0]
+    : null
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -137,6 +145,7 @@ const App = () => {
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<User userBlogs={userBlogs} />} />
       </Routes>
     </div>
   )
