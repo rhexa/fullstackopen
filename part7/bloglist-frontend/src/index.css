@@ -14,3 +14,24 @@
 .success {
   color: green;
 }
+
+.navigation ul {
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+}
+
+.navigation li {
+  margin-right: 20px;
+}
+
+.navigation {
+  background-color: #bebebe;
+  color: rgb(0, 0, 0);
+  align-items: center;
+  height: 2.5rem;
+  display: flex;
+  padding: 0 15px;
+}

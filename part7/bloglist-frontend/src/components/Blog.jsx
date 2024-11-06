@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react'
-import Togglable from './Togglable'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const blogStyle = {
     paddingTop: 10,
@@ -36,7 +36,10 @@ const Blog = ({ blog }) => {
     if (!confirm) return
 
     dispatch(removeBlog(blog))
+    navigate('/')
   }
+
+  if (!blog) return null
 
   return (
     <div style={blogStyle}>

@@ -1,4 +1,5 @@
 const User = ({ userBlogs }) => {
+  if (!userBlogs) return null
   const { name, blogs } = userBlogs
 
   return (
