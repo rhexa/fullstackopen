@@ -69,7 +69,7 @@ const Blog = ({ blog }) => {
         </div>
       )}
 
-      <Comments comments={blog.comments} />
+      <Comments data={blog} />
     </div>
   )
 }
