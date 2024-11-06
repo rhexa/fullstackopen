@@ -9,11 +9,17 @@ import Navigation from './components/Navigation'
 import Users from './routes/Users'
 import User from './routes/User'
 import Blogs from './routes/Blogs'
-import { Container } from '@mui/material'
+import {
+  Button,
+  Container,
+  FormControl,
+  Input,
+  InputLabel,
+  TextField,
+} from '@mui/material'
+import Login from './routes/Login'
 
 const App = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user)
 
@@ -31,39 +37,6 @@ const App = () => {
     ? blogs.filter((blog) => blog.id === blogMatch.params.id)[0]
     : null
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    dispatch(loginUser(username, password))
-
-    setUsername('')
-    setPassword('')
-  }
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
-
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [])
@@ -77,13 +50,7 @@ const App = () => {
   }, [])
 
   if (user === null) {
-    return (
-      <div>
-        <h2>log in to application</h2>
-        <Notification />
-        {loginForm()}
-      </div>
-    )
+    return <Login />
   }
 
   // When user is logged in, render this component (User dashboard)
@@ -99,6 +66,7 @@ const App = () => {
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User userBlogs={userBlogs} />} />
         <Route path="/blogs/:id" element={<Blog blog={blog} />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Container>
   )

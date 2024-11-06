@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 
 const BlogList = ({ blogs }) => {
-  const [sort, setSort] = useState('none')
+  const [sort, setSort] = useState('default')
 
   const sortBlogs = () => {
     switch (sort) {

@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import useInput from '../hooks/useInput'
 import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
-import { setSuccessNotification } from '../reducers/notificationReducer'
+import { Box, Button, TextField } from '@mui/material'
 
 const BlogForm = ({ toggleVisibility }) => {
   const { reset: titleReset, ...title } = useInput('text')
@@ -33,21 +32,15 @@ const BlogForm = ({ toggleVisibility }) => {
 
   return (
     <>
-      <h2>create new</h2>
+      <h2>Add New Blog</h2>
       <form onSubmit={addBlog}>
-        <div>
-          title
-          <input {...title} />
-        </div>
-        <div>
-          author
-          <input {...author} />
-        </div>
-        <div>
-          url
-          <input {...url} />
-        </div>
-        <button type="submit">create</button>
+        <TextField fullWidth variant="outlined" label="title" {...title} />
+        <TextField fullWidth variant="outlined" label="author" {...author} />
+        <TextField fullWidth variant="outlined" label="url" {...url} />
+        <Button type="submit" variant="contained" color="primary">
+          create
+        </Button>
+        <Button onClick={toggleVisibility}>cancel</Button>
       </form>
     </>
   )
