@@ -3,19 +3,22 @@ import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import { useDispatch, useSelector } from 'react-redux'
-import { setErrorNotification } from './reducers/notificationReducer'
 import { initializeBlogs } from './reducers/blogReducer'
+import {
+  _logout,
+  _setUser,
+  loginUser,
+  logoutUser,
+} from './reducers/userReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const [sort, setSort] = useState('none')
   const blogFormRef = useRef()
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user)
 
   const blogs = useSelector(({ blogs }) => {
     switch (sort) {
@@ -29,25 +32,14 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
 
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
+    dispatch(loginUser(username, password))
 
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      dispatch(setErrorNotification('Wrong credentials'))
-    }
+    setUsername('')
+    setPassword('')
   }
 
   const handleLogout = () => {
-    window.localStorage.clear()
-    setUser(null)
+    dispatch(logoutUser())
   }
 
   const loginForm = () => (
@@ -86,7 +78,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(_setUser(user))
     }
   }, [])
 
