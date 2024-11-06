@@ -1,6 +1,7 @@
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Comments from './Comments'
 
 const Blog = ({ blog }) => {
   const dispatch = useDispatch()
@@ -67,6 +68,8 @@ const Blog = ({ blog }) => {
           </button>
         </div>
       )}
+
+      <Comments comments={blog.comments} />
     </div>
   )
 }
