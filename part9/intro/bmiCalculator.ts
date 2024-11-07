@@ -1,3 +1,5 @@
+import { parseNumber } from './utils'
+
 /**
  * Calculates the Body Mass Index (BMI) based on the given height and weight.
  *
@@ -19,4 +21,20 @@ const calculateBmi = (height: number, weight: number): string => {
   }
 }
 
-console.log(calculateBmi(180, 74))
+const main = (): void => {
+  if (process.argv.length !== 4) {
+    console.error('Usage: node bmiCalculator.js <height> <weight>')
+    process.exit(1)
+  }
+
+  try {
+    const height: number = parseNumber(process.argv[2])
+    const weight: number = parseNumber(process.argv[3])
+
+    console.log(calculateBmi(Number(height), Number(weight)))
+  } catch (error) {
+    console.error(error.message)
+  }
+}
+
+main()

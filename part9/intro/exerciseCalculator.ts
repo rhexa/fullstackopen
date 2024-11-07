@@ -1,3 +1,5 @@
+import { parseNumber, ParsingError } from './utils'
+
 interface ExerciseResult {
   periodLength: number
   trainingDays: number
@@ -41,8 +43,37 @@ const calculateExercises = (
   }
 }
 
-// Example usage:
-const hours = [3, 0, 2, 4.5, 0, 3, 1]
-const target = 2
-const result = calculateExercises(hours, target)
-console.log(result)
+const main = (): void => {
+  if (process.argv.length < 4) {
+    console.error('Usage: node exerciseCalculator.js <target> <hours>')
+    process.exit(1)
+  }
+
+  let target: number
+  let hours: number[]
+
+  try {
+    target = parseNumber(process.argv[2])
+  } catch (error) {
+    if (error.name === 'ParsingError') {
+      console.error('Target must be a number')
+      process.exit(1)
+    }
+  }
+
+  hours = process.argv.slice(3).map((h) => {
+    try {
+      const parsedNumber = parseNumber(h)
+      return parsedNumber
+    } catch (error) {
+      if (error.name === 'ParsingError') {
+        console.error('Hours must be numbers')
+        process.exit(1)
+      }
+    }
+  })
+
+  console.log(calculateExercises(hours, target))
+}
+
+main()
