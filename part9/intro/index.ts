@@ -1,8 +1,26 @@
 import express from 'express'
+import { parseNumber } from './utils'
+import { calculateBmi } from './bmiCalculator'
 const app = express()
 
 app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack')
+})
+
+app.get('/bmi', (req, res) => {
+  try {
+    const height = parseNumber(req.query.height)
+    const weight = parseNumber(req.query.weight)
+
+    const bmi = calculateBmi(height, weight)
+    res.send({ weight, height, bmi })
+  } catch (error) {
+    if (error.name === 'ParsingError') {
+      res.status(400).send({
+        error: 'malformatted parameters',
+      })
+    }
+  }
 })
 
 const PORT = 3003

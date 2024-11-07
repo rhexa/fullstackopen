@@ -7,7 +7,7 @@ import { parseNumber } from './utils'
  * @param weight The weight in kilograms.
  * @returns A string indicating the BMI category (e.g. "Normal range").
  */
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   const heightInMeters = height / 100
   const bmi = weight / (heightInMeters * heightInMeters)
   if (bmi < 18.5) {
@@ -37,4 +37,6 @@ const main = (): void => {
   }
 }
 
-main()
+if (require.main === module) {
+  main()
+}
