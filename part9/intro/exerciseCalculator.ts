@@ -10,7 +10,7 @@ interface ExerciseResult {
   average: number
 }
 
-const calculateExercises = (
+export const calculateExercises = (
   hours: number[],
   target: number
 ): ExerciseResult => {
@@ -63,4 +63,6 @@ const main = (): void => {
   }
 };
 
-main();
+if (require.main === module) {
+  main();
+}
