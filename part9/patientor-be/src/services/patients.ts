@@ -2,7 +2,7 @@ import patientsData from '../data/patients';
 import { v4 as uuidv4 } from 'uuid';
 import { NewPatient, Patient, nonSensitivePatientData } from '../types';
 
-const patients: Patient[] = patientsData;
+const patients: Patient[] = patientsData as Patient[];
 
 const getAll = () : Patient[] => {
   return patients;
