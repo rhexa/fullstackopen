@@ -6,6 +6,7 @@ import patientsRouter from './routes/patients';
 const PORT = 3001;
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get("/api/ping", (_req, res) => {
   res.send("pong");
