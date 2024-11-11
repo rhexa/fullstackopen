@@ -1,0 +1,5 @@
+@URL=http://localhost:3001/api/diagnoses
+
+###
+# Get diagnoses
+GET {{URL}}
