@@ -36,17 +36,82 @@ const DiaryForm = ({ onSubmit }: { onSubmit: (entry: NewDiaryEntry) => Promise<v
     <form onSubmit={handleSubmit}>
       <label>
         Date:
-        <input type="text" value={date} onChange={(event) => setDate(event.target.value)} />
+        <input
+          type="date"
+          value={date}
+          onChange={(event) => setDate(event.target.value)}
+        />
       </label>
       <br />
       <label>
         Visibility:
-        <input type="text" value={visibility} onChange={(event) => setVisibility(event.target.value)} />
+        <input
+          type="radio"
+          value="great"
+          checked={visibility === 'great'}
+          onChange={(event) => setVisibility(event.target.value)}
+        />
+        <label>Great</label>
+        <input
+          type="radio"
+          value="good"
+          checked={visibility === 'good'}
+          onChange={(event) => setVisibility(event.target.value)}
+        />
+        <label>Good</label>
+        <input
+          type="radio"
+          value="ok"
+          checked={visibility === 'ok'}
+          onChange={(event) => setVisibility(event.target.value)}
+        />
+        <label>Ok</label>
+        <input
+          type="radio"
+          value="poor"
+          checked={visibility === 'poor'}
+          onChange={(event) => setVisibility(event.target.value)}
+        />
+        <label>Poor</label>
       </label>
       <br />
       <label>
         Weather:
-        <input type="text" value={weather} onChange={(event) => setWeather(event.target.value)} />
+        <input
+          type="radio"
+          value="sunny"
+          checked={weather === 'sunny'}
+          onChange={(event) => setWeather(event.target.value)}
+        />
+        <label>Sunny</label>
+        <input
+          type="radio"
+          value="rainy"
+          checked={weather === 'rainy'}
+          onChange={(event) => setWeather(event.target.value)}
+        />
+        <label>Rainy</label>
+        <input
+          type="radio"
+          value="cloudy"
+          checked={weather === 'cloudy'}
+          onChange={(event) => setWeather(event.target.value)}
+        />
+        <label>Cloudy</label>
+        <input
+          type="radio"
+          value="stormy"
+          checked={weather === 'stormy'}
+          onChange={(event) => setWeather(event.target.value)}
+        />
+        <label>Stormy</label>
+        <input
+          type="radio"
+          value="windy"
+          checked={weather === 'windy'}
+          onChange={(event) => setWeather(event.target.value)}
+        />
+        <label>Windy</label>
       </label>
       <br />
       <label>

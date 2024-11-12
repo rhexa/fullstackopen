@@ -17,8 +17,7 @@ export enum Visibility {
 
 export const newDiaryEntrySchema = z.object({
   date: z.string(),
-  // weather: z.nativeEnum(Weather),
-  weather: z.string(),
+  weather: z.nativeEnum(Weather),
   visibility: z.nativeEnum(Visibility),
   comment: z.string().optional(),
 });

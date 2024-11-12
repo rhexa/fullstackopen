@@ -16,7 +16,7 @@ const Notification = ( { message, setMessage }: { message: Message, setMessage: 
     return () => {
       clearTimeout(timer);
     }
-  }, [message]);
+  }, [message, setMessage]);
 
   if (!value) {
     return null;
