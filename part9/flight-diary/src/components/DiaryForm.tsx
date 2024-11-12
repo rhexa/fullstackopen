@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { NewDiaryEntry, newDiaryEntrySchema } from '../types';
 
-const DiaryForm = ({ onSubmit }: { onSubmit: (entry: NewDiaryEntry) => void }) => {
+const DiaryForm = ({ onSubmit }: { onSubmit: (entry: NewDiaryEntry) => Promise<void> }) => {
   const [date, setDate] = useState('');
   const [weather, setWeather] = useState('');
   const [visibility, setVisibility] = useState('');
   const [comment, setComment] = useState('');
 
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const reset = () => {
+    setDate('');
+    setWeather('');
+    setVisibility('');
+    setComment('');
+  }
+
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     const newEntry: NewDiaryEntry = newDiaryEntrySchema.parse({
       date,
@@ -15,7 +22,14 @@ const DiaryForm = ({ onSubmit }: { onSubmit: (entry: NewDiaryEntry) => void }) =
       visibility,
       comment
     })
-    onSubmit(newEntry);
+
+    try {
+      await onSubmit(newEntry)
+      reset();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
+      // ignore
+    }
   };
 
   return (
@@ -26,13 +40,13 @@ const DiaryForm = ({ onSubmit }: { onSubmit: (entry: NewDiaryEntry) => void }) =
       </label>
       <br />
       <label>
-        Weather:
-        <input type="text" value={weather} onChange={(event) => setWeather(event.target.value)} />
+        Visibility:
+        <input type="text" value={visibility} onChange={(event) => setVisibility(event.target.value)} />
       </label>
       <br />
       <label>
-        Visibility:
-        <input type="text" value={visibility} onChange={(event) => setVisibility(event.target.value)} />
+        Weather:
+        <input type="text" value={weather} onChange={(event) => setWeather(event.target.value)} />
       </label>
       <br />
       <label>

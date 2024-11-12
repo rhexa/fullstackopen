@@ -17,7 +17,8 @@ export enum Visibility {
 
 export const newDiaryEntrySchema = z.object({
   date: z.string(),
-  weather: z.nativeEnum(Weather),
+  // weather: z.nativeEnum(Weather),
+  weather: z.string(),
   visibility: z.nativeEnum(Visibility),
   comment: z.string().optional(),
 });
@@ -26,4 +27,9 @@ export type NewDiaryEntry = z.infer<typeof newDiaryEntrySchema>;
 
 export interface DiaryEntry extends NewDiaryEntry {
   id: string
+}
+
+export type Message = {
+  value: string,
+  type: 'success' | 'error'
 }
