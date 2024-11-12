@@ -3,3 +3,8 @@
 ###
 # Get diagnoses
 GET {{URL}}
+
+###
+# Get diagnosis by id
+@ID=d2773336-f723-11e9-8f0b-362b9e155667
+GET {{URL}}/{{ID}}
