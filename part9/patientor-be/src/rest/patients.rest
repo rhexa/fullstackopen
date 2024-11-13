@@ -1,8 +1,8 @@
 @URL=http://localhost:3001/api/patients
-
+@BASEURL=http://localhost:3001/api
 ###
 # Get diagnoses
-GET {{URL}}
+GET {{BASEURL}}/diagnoses
 
 ###
 # Get diagnosis by id
@@ -20,7 +20,7 @@ Content-Type: application/json
   "type": "Hospital",
   "specialist": "DR House",
   "description": "Lorem Ipsum Dolor",
-  "diagnosisCodes": ["S62.5"],
+  "diagnosisCodes": ["M24.2"],
   "discharge": {
     "date": "{{$datetime rfc1123}}",
     "criteria": "Whatever"

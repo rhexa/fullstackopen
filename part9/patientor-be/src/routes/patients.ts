@@ -41,8 +41,14 @@ router.post('/:id/entries', (req, res) => {
     const entry = NewEntrySchema.parse(req.body);
     res.send(patientsService.addEntryToPatient(id, entry));
   } catch (error: unknown) {
-    if (error instanceof Error && error.message === 'Patient not found') {
-      res.status(404).send({ error: 'Patient not found' });
+    if (error instanceof Error) {
+      if (error.message === 'Patient not found') {
+        res.status(404).send({ error: 'Patient not found' });
+      }
+
+      if (error instanceof z.ZodError) {
+        res.status(400).send({ error: error.issues });
+      }
     }
   }
 });

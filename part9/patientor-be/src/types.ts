@@ -14,25 +14,24 @@ export enum Gender {
 
 // ## Entry
 // Schemas
-export const HospitalEntrySchema = z.object({
-  id: z.string(),
-  date: z.string(),
+const BaseEntrySchema = z.object({
+  id: z.string().min(1),
+  date: z.string().date(),
+  specialist: z.string().min(3),
+  description: z.string().min(3),
+});
+
+export const HospitalEntrySchema = BaseEntrySchema.extend({
   type: z.literal('Hospital'),
-  specialist: z.string(),
-  description: z.string(),
-  diagnosisCodes: z.array(z.string()),
+  diagnosisCodes: z.array(z.string()).optional(),
   discharge: z.object({
-    date: z.string(),
-    criteria: z.string(),
+    date: z.string().date(),
+    criteria: z.string().min(1),
   }),
 });
 
-export const OccupationalHealthcareEntrySchema = z.object({
-  id: z.string(),
-  date: z.string(),
+export const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
   type: z.literal('OccupationalHealthcare'),
-  specialist: z.string(),
-  description: z.string(),
   diagnosisCodes: z.array(z.string()).optional(),
   employerName: z.string(),
   sickLeave: z.optional(z.object({
@@ -41,12 +40,8 @@ export const OccupationalHealthcareEntrySchema = z.object({
   })),
 });
 
-export const HealthCheckEntrySchema = z.object({
-  id: z.string(),
-  date: z.string(),
+export const HealthCheckEntrySchema = BaseEntrySchema.extend({
   type: z.literal('HealthCheck'),
-  specialist: z.string(),
-  description: z.string(),
   healthCheckRating: z.number(),
 });
 
