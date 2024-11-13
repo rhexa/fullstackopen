@@ -13,14 +13,16 @@ import PatientInfoPage from "./components/PatientInfoPage";
 const App = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
 
+
+  const fetchPatientList = async () => {
+    const patients = await patientService.getAll();
+    setPatients(patients);
+  };
+
   useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
 
-    const fetchPatientList = async () => {
-      const patients = await patientService.getAll();
-      setPatients(patients);
-    };
-    void fetchPatientList();
+    fetchPatientList();
   }, []);
   
   return (

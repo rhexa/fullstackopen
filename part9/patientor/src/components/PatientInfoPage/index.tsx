@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Params, useParams } from 'react-router-dom';
-import { Gender, Patient } from '../../types';
+import { Diagnosis, Gender, Patient } from '../../types';
 import patientService from '../../services/patients';
 import {Male,Female,HorizontalRule} from '@mui/icons-material';
 import Entries from './Entries';
+import diagnosesService from "../../services/diagnoses";
 
 const PatientInfoPage = () => {
+  const [patient, setPatient] = useState<Patient>();
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+
   const parseId = (params: Readonly<Params<string>>): string => {
     if ('id' in params && typeof params.id === 'string') {
       return params.id;
@@ -16,18 +20,29 @@ const PatientInfoPage = () => {
 
   const id = parseId(useParams());
 
-  const [patient, setPatient] = React.useState<Patient | null>(null);
+  const fetchPatient = async () => {
+    const patient = await patientService.getPatientById(id);
+    setPatient(patient);
+  };
+
+  const fetchDiagnoses = async () => {
+    const diagnosesData = await diagnosesService.getAll();
+    setDiagnoses(diagnosesData);
+  };
 
   useEffect(() => {
-    const fetchPatient = async () => {
-      const patient = await patientService.getPatientById(id);
-      setPatient(patient);
-    };
     fetchPatient();
+    fetchDiagnoses();
   }, [id]);
 
   if (!patient) return <div>Loading...</div>;
 
+  
+  const data = {
+    entries: patient.entries,
+    diagnoses
+  };
+  
   return (
     <div>
       <h2>
@@ -39,7 +54,7 @@ const PatientInfoPage = () => {
       <p>SSN: {patient.ssn}</p>
       <p>Occupation: {patient.occupation}</p>
       <p>Date of Birth: {patient.dateOfBirth}</p>
-      <Entries entries={patient.entries} />
+      <Entries data={data} />
     </div>
   );
 };

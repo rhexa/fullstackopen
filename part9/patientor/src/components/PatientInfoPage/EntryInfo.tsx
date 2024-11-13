@@ -1,7 +1,12 @@
-import { Entry, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from "../../types";
+import { Diagnosis, Entry, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from "../../types";
 import { assertNever } from "../../utils";
 
-const EntryInfo = ({ entry }: { entry: Entry }) => {
+const EntryInfo = ({ entry, diagnoses }: { entry: Entry, diagnoses: Diagnosis[] }) => {
+  const getDiagnosisName = (code: string) => {
+    const diagnosis = diagnoses.find((d) => d.code === code);
+    return diagnosis ? diagnosis.name : '';
+  };
+
   const HospitalType = ({ entry }: { entry: HospitalEntry }) => {
     return (
       <div>
@@ -9,7 +14,7 @@ const EntryInfo = ({ entry }: { entry: Entry }) => {
         {entry.diagnosisCodes &&
           <ul>
             {entry.diagnosisCodes.map((code) => (
-              <li key={code}>{code}</li>
+              <li key={code}>{code} {getDiagnosisName(code)}</li>
             ))}
           </ul>
         }
