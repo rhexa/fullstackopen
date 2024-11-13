@@ -1,8 +1,8 @@
-import patientsData from '../data/patients';
+import patientsData from '../data/patients-full';
 import { v4 as uuidv4 } from 'uuid';
 import { NewPatient, NonSensitivePatient, nonSensitivePatientSchema, Patient } from '../types';
 
-const patients: Patient[] = patientsData as Patient[];
+const patients: Patient[] = patientsData;
 
 const getAll = () : Patient[] => {
   return patients;
