@@ -56,11 +56,26 @@ export const EntrySchema = z.union([
   HealthCheckEntrySchema,
 ]);
 
+export const NewHospitalEntrySchema = HospitalEntrySchema.omit({ id: true });
+export const NewOccupationalHealthcareEntrySchema = OccupationalHealthcareEntrySchema.omit({ id: true });
+export const NewHealthCheckEntrySchema = HealthCheckEntrySchema.omit({ id: true });
+
+export const NewEntrySchema = z.union([
+  NewHospitalEntrySchema,
+  NewOccupationalHealthcareEntrySchema,
+  NewHealthCheckEntrySchema
+]);
+
 // Type definitions
 export type Entry = z.infer<typeof EntrySchema>;
 export type HospitalEntry = z.infer<typeof HospitalEntrySchema>;
 export type OccupationalHealthcareEntry = z.infer<typeof OccupationalHealthcareEntrySchema>;
 export type HealthCheckEntry = z.infer<typeof HealthCheckEntrySchema>;
+
+export type NewEntry = z.infer<typeof NewEntrySchema>;
+export type NewHospitalEntry = z.infer<typeof NewHospitalEntrySchema>;
+export type NewOccupationalHealthcareEntry = z.infer<typeof NewOccupationalHealthcareEntrySchema>;
+export type NewHealthCheckEntry = z.infer<typeof NewHealthCheckEntrySchema>;
 
 // ## Patient
 // Schemas

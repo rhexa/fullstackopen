@@ -8,3 +8,54 @@ GET {{URL}}
 # Get diagnosis by id
 @ID=d2773336-f723-11e9-8f0b-362b9e155667
 GET {{URL}}/{{ID}}
+
+###
+# Add patient Hospital entry
+@ID=d2773336-f723-11e9-8f0b-362b9e155667
+POST {{URL}}/{{ID}}/entries
+Content-Type: application/json
+
+{
+  "date": "{{$datetime rfc1123}}",
+  "type": "Hospital",
+  "specialist": "DR House",
+  "description": "Lorem Ipsum Dolor",
+  "diagnosisCodes": ["S62.5"],
+  "discharge": {
+    "date": "{{$datetime rfc1123}}",
+    "criteria": "Whatever"
+  }
+}
+
+###
+# Add patient OccupationalHealthcare entry
+@ID=d2773336-f723-11e9-8f0b-362b9e155667
+POST {{URL}}/{{ID}}/entries
+Content-Type: application/json
+
+{
+  "date": "{{$datetime rfc1123}}",
+  "type": "OccupationalHealthcare",
+  "specialist": "DR House",
+  "description": "Lorem Ipsum Dolor",
+  "diagnosisCodes": ["S62.5"],
+  "employerName": "",
+  "sickLeave": {
+    "startDate": "10-10-2020",
+    "endDate": "13-10-2020"
+  }
+}
+
+###
+@ID=d2773336-f723-11e9-8f0b-362b9e155667
+# Add patient HealthCheck entry
+POST {{URL}}/{{ID}}/entries
+Content-Type: application/json
+
+{
+  "date": "{{$datetime rfc1123}}",
+  "type": "HealthCheck",
+  "specialist": "DR House",
+  "description": "Lorem Ipsum Dolor",
+  "healthCheckRating": 0
+}

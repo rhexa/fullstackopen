@@ -1,6 +1,6 @@
 import express from 'express';
 import patientsService from '../services/patients';
-import { newPatientSchema } from '../types';
+import { NewEntrySchema, newPatientSchema } from '../types';
 import { z } from 'zod';
 
 const router = express.Router();
@@ -28,6 +28,19 @@ router.get('/:id', (req, res) => {
     const patient = patientsService.getPatientById(id);
     res.send(patient);
   } catch (error) {
+    if (error instanceof Error && error.message === 'Patient not found') {
+      res.status(404).send({ error: 'Patient not found' });
+    }
+  }
+});
+
+router.post('/:id/entries', (req, res) => {
+  const id = req.params.id;
+  
+  try {
+    const entry = NewEntrySchema.parse(req.body);
+    res.send(patientsService.addEntryToPatient(id, entry));
+  } catch (error: unknown) {
     if (error instanceof Error && error.message === 'Patient not found') {
       res.status(404).send({ error: 'Patient not found' });
     }
