@@ -3,6 +3,7 @@ import { Params, useParams } from 'react-router-dom';
 import { Gender, Patient } from '../../types';
 import patientService from '../../services/patients';
 import {Male,Female,HorizontalRule} from '@mui/icons-material';
+import Entries from './Entries';
 
 const PatientInfoPage = () => {
   const parseId = (params: Readonly<Params<string>>): string => {
@@ -38,7 +39,7 @@ const PatientInfoPage = () => {
       <p>SSN: {patient.ssn}</p>
       <p>Occupation: {patient.occupation}</p>
       <p>Date of Birth: {patient.dateOfBirth}</p>
-      <p>Entries: {patient.entries.length === 0 && <>[ ]</>}</p>
+      <Entries entries={patient.entries} />
     </div>
   );
 };
