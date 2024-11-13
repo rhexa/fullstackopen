@@ -1,4 +1,4 @@
-import { Rating } from '@mui/material';
+import { Box, Rating } from '@mui/material';
 import { Favorite } from '@mui/icons-material';
 
 import { styled } from '@mui/material/styles';
@@ -26,7 +26,7 @@ const HEALTHBAR_TEXTS = [
 
 const HealthRatingBar = ({ rating, showText }: BarProps) => {
   return (
-    <div className="health-bar">
+    <Box sx={{ display: "flex", alignItems: "center" }}>
       <StyledRating
         readOnly
         value={4 - rating}
@@ -34,8 +34,10 @@ const HealthRatingBar = ({ rating, showText }: BarProps) => {
         icon={<Favorite fontSize="inherit" />}
       />
 
-      {showText ? <p>{HEALTHBAR_TEXTS[rating]}</p> : null}
-    </div>
+      {showText &&
+        <Box sx={{ ml: 2 }}>{HEALTHBAR_TEXTS[rating]}</Box>
+      }
+    </Box>
   );
 };
 
