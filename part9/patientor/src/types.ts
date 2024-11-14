@@ -40,6 +40,7 @@ export interface OccupationalHealthcareEntry {
   type: 'OccupationalHealthcare';
   specialist: string;
   description: string;
+  diagnosisCodes: string[];
   employerName: string;
   sickLeave?: {
     startDate: string;

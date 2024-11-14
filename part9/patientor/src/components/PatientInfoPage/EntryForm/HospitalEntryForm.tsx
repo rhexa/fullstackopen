@@ -1,13 +1,14 @@
-import { Button, TextField, Typography } from '@mui/material';
-import { NewHospitalEntry } from '../../../types';
+import { Autocomplete, Button, TextField, Typography } from '@mui/material';
+import { Diagnosis, NewHospitalEntry } from '../../../types';
 import { useState } from 'react';
 
 interface HospitalEntryFormProps {
   handleSubmit: (event: React.SyntheticEvent, entry: NewHospitalEntry) => Promise<void>,
   handleCancel: () => void
+  diagnoses: Diagnosis[]
 }
 
-const HospitalEntryForm = ({ handleSubmit, handleCancel }: HospitalEntryFormProps) => {
+const HospitalEntryForm = ({ handleSubmit, handleCancel, diagnoses }: HospitalEntryFormProps) => {
   const [entry, setEntry] = useState<NewHospitalEntry>({
     type: 'Hospital',
     date: '',
@@ -63,13 +64,31 @@ const HospitalEntryForm = ({ handleSubmit, handleCancel }: HospitalEntryFormProp
         fullWidth
         sx={{ marginBottom: 2 }}
       />
-      <TextField
-        label="Diagnosis Codes"
-        name="diagnosisCodes"
-        value={entry.diagnosisCodes.join(', ')}
-        onChange={handleFieldChange}
-        fullWidth
-        sx={{ marginBottom: 2 }}
+      <Autocomplete
+        multiple
+        id="tags-outlined"
+        options={diagnoses}
+        getOptionLabel={(diagnosis: Diagnosis) => diagnosis.code}
+        filterSelectedOptions
+        value={entry.diagnosisCodes.map((code) => {
+          const diagnosis = diagnoses.find((d) => d.code === code);
+          return diagnosis ? diagnosis : { code: '', name: '' };
+        })}
+        onChange={(_, data) => {
+          setEntry({
+            ...entry,
+            diagnosisCodes: data.map((d) => d.code),
+          });
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Diagnosis Codes"
+            placeholder="Diagnosis Codes"
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          />
+        )}
       />
       <TextField
         label="Discharge Date"
@@ -77,6 +96,8 @@ const HospitalEntryForm = ({ handleSubmit, handleCancel }: HospitalEntryFormProp
         value={entry.discharge.date}
         onChange={handleFieldChange}
         fullWidth
+        type="date"
+        InputLabelProps={{ shrink: true }}
         sx={{ marginBottom: 2 }}
       />
       <TextField

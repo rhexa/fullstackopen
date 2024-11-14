@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EntryType, Message, NewEntry } from '../../../types';
+import { Diagnosis, EntryType, Message, NewEntry } from '../../../types';
 import { Box, Button, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import patientsService from '../../../services/patients';
 import { useParams } from 'react-router-dom';
@@ -11,7 +11,7 @@ import HospitalEntryForm from './HospitalEntryForm';
 import OccupationalHealthcareEntryForm from './OccupationalHealthcareEntryForm';
 import HealthCheckEntryForm from './HealthCheckEntryForm';
 
-const EntryForm = () => {
+const EntryForm = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const id = parseId(useParams());
 
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -64,9 +64,9 @@ const EntryForm = () => {
   const FormSwitcher = () => {
     switch (EntryType[entryType]) {
       case EntryType.Hospital:
-        return (<HospitalEntryForm handleCancel={handleCancel} handleSubmit={handleSubmit} />);
+        return (<HospitalEntryForm handleCancel={handleCancel} handleSubmit={handleSubmit} diagnoses={diagnoses} />);
       case EntryType.OccupationalHealthcare:
-        return (<OccupationalHealthcareEntryForm handleCancel={handleCancel} handleSubmit={handleSubmit} />);
+        return (<OccupationalHealthcareEntryForm handleCancel={handleCancel} handleSubmit={handleSubmit} diagnoses={diagnoses} />);
       case EntryType.HealthCheck:
         return (<HealthCheckEntryForm handleCancel={handleCancel} handleSubmit={handleSubmit} />);
       default:

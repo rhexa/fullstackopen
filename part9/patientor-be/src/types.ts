@@ -28,7 +28,7 @@ export const parseEntryTypeFromRequestBody = (body: unknown): EntryType => {
 // Schemas
 const BaseEntrySchema = z.object({
   id: z.string().min(1),
-  date: z.coerce.date(),
+  date: z.string().date(),
   specialist: z.string().min(3),
   description: z.string().min(3),
 });
@@ -37,7 +37,7 @@ export const HospitalEntrySchema = BaseEntrySchema.extend({
   type: z.literal('Hospital'),
   diagnosisCodes: z.array(z.string()).optional(),
   discharge: z.object({
-    date: z.string().min(1),
+    date: z.string().date(),
     criteria: z.string().min(1),
   }),
 });
@@ -47,8 +47,8 @@ export const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
   diagnosisCodes: z.array(z.string()).optional(),
   employerName: z.string(),
   sickLeave: z.optional(z.object({
-    startDate: z.string().min(1),
-    endDate: z.string().min(1),
+    startDate: z.string().date(),
+    endDate: z.string().date(),
   })),
 });
 
@@ -88,7 +88,7 @@ export type NewHealthCheckEntry = z.infer<typeof NewHealthCheckEntrySchema>;
 // Schemas
 export const newPatientSchema = z.object({
   name: z.string(),
-  dateOfBirth: z.string().pipe(z.coerce.date()),
+  dateOfBirth: z.string().pipe(z.string().date()),
   ssn: z.string().optional(),
   gender: z.nativeEnum(Gender),
   occupation: z.string(),

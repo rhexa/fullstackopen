@@ -48,7 +48,7 @@ const PatientInfoPage = () => {
       <p>SSN: {patient.ssn}</p>
       <p>Occupation: {patient.occupation}</p>
       <p>Date of Birth: {patient.dateOfBirth}</p>
-      <EntryForm />
+      <EntryForm diagnoses={diagnoses} />
       <Entries data={data} />
     </div>
   );

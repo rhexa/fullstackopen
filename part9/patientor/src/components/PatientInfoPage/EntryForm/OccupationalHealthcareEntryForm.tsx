@@ -1,18 +1,20 @@
-import { Button, TextField, Typography } from '@mui/material';
-import { NewHospitalEntry, NewOccupationalHealthcareEntry } from '../../../types';
+import { Autocomplete, Button, InputLabel, TextField, Typography } from '@mui/material';
+import { Diagnosis, NewHospitalEntry, NewOccupationalHealthcareEntry } from '../../../types';
 import { useState } from 'react';
 
 interface OccupationalHealthcareEntryFormProps {
   handleSubmit: (event: React.SyntheticEvent, entry: NewOccupationalHealthcareEntry) => Promise<void>,
-  handleCancel: () => void
+  handleCancel: () => void,
+  diagnoses: Diagnosis[]
 }
 
-const OccupationalHealthcareEntryForm = ({ handleSubmit, handleCancel }: OccupationalHealthcareEntryFormProps) => {
+const OccupationalHealthcareEntryForm = ({ handleSubmit, handleCancel, diagnoses }: OccupationalHealthcareEntryFormProps) => {
   const [entry, setEntry] = useState<NewOccupationalHealthcareEntry>({
     type: 'OccupationalHealthcare',
     date: '',
     specialist: '',
     description: '',
+    diagnosisCodes: [],
     employerName: '',
     sickLeave: {
       startDate: '',
@@ -62,6 +64,32 @@ const OccupationalHealthcareEntryForm = ({ handleSubmit, handleCancel }: Occupat
         fullWidth
         sx={{ marginBottom: 2 }}
       />
+      <Autocomplete
+        multiple
+        id="tags-outlined"
+        options={diagnoses}
+        getOptionLabel={(diagnosis: Diagnosis) => diagnosis.code}
+        filterSelectedOptions
+        value={entry.diagnosisCodes.map((code) => {
+          const diagnosis = diagnoses.find((d) => d.code === code);
+          return diagnosis ? diagnosis : { code: '', name: '' };
+        })}
+        onChange={(_, data) => {
+          setEntry({
+            ...entry,
+            diagnosisCodes: data.map((d) => d.code),
+          });
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Diagnosis Codes"
+            placeholder="Diagnosis Codes"
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          />
+        )}
+      />
       <TextField
         label="Employer Name"
         name="employerName"
@@ -70,11 +98,14 @@ const OccupationalHealthcareEntryForm = ({ handleSubmit, handleCancel }: Occupat
         fullWidth
         sx={{ marginBottom: 2 }}
       />
+      <InputLabel sx={{ marginBottom: 2 }}>Sick Leave</InputLabel>
       <TextField
         label="Start Date"
         name="sickLeave.startDate"
         value={entry.sickLeave?.startDate}
         onChange={handleFieldChange}
+        type="date"
+        InputLabelProps={{ shrink: true }}
         fullWidth
         sx={{ marginBottom: 2 }}
       />
@@ -83,6 +114,8 @@ const OccupationalHealthcareEntryForm = ({ handleSubmit, handleCancel }: Occupat
         name="sickLeave.endDate"
         value={entry.sickLeave?.endDate}
         onChange={handleFieldChange}
+        type="date"
+        InputLabelProps={{ shrink: true }}
         fullWidth
         sx={{ marginBottom: 2 }}
       />
