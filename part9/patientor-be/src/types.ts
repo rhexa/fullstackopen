@@ -12,11 +12,23 @@ export enum Gender {
   Other = 'other'
 }
 
+export type EntryType = 'Hospital' | 'OccupationalHealthcare' | 'HealthCheck';
+
+export const parseEntryTypeFromRequestBody = (body: unknown): EntryType => { 
+  if (!body || typeof body !== 'object') throw new Error('Incorrect or missing type');
+  if (!('type' in body)) throw new Error('Incorrect or missing type');
+  
+  const { type } = body;
+
+  if (typeof type === 'string' && (type === 'Hospital' || type === 'OccupationalHealthcare' || type === 'HealthCheck')) return type as EntryType;
+  throw new Error('Incorrect or missing type');
+};
+
 // ## Entry
 // Schemas
 const BaseEntrySchema = z.object({
   id: z.string().min(1),
-  date: z.string().date(),
+  date: z.coerce.date(),
   specialist: z.string().min(3),
   description: z.string().min(3),
 });
@@ -25,7 +37,7 @@ export const HospitalEntrySchema = BaseEntrySchema.extend({
   type: z.literal('Hospital'),
   diagnosisCodes: z.array(z.string()).optional(),
   discharge: z.object({
-    date: z.string().date(),
+    date: z.string().min(1),
     criteria: z.string().min(1),
   }),
 });
@@ -35,8 +47,8 @@ export const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
   diagnosisCodes: z.array(z.string()).optional(),
   employerName: z.string(),
   sickLeave: z.optional(z.object({
-    startDate: z.string(),
-    endDate: z.string(),
+    startDate: z.string().min(1),
+    endDate: z.string().min(1),
   })),
 });
 
@@ -76,7 +88,7 @@ export type NewHealthCheckEntry = z.infer<typeof NewHealthCheckEntrySchema>;
 // Schemas
 export const newPatientSchema = z.object({
   name: z.string(),
-  dateOfBirth: z.string().date(),
+  dateOfBirth: z.string().pipe(z.coerce.date()),
   ssn: z.string().optional(),
   gender: z.nativeEnum(Gender),
   occupation: z.string(),

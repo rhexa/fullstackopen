@@ -1,7 +1,8 @@
 import express from 'express';
 import patientsService from '../services/patients';
-import { NewEntrySchema, newPatientSchema } from '../types';
+import { NewEntry, NewHealthCheckEntrySchema, NewHospitalEntrySchema, NewOccupationalHealthcareEntrySchema, newPatientSchema, parseEntryTypeFromRequestBody } from '../types';
 import { z } from 'zod';
+import { assertNever } from '../utils';
 
 const router = express.Router();
 
@@ -36,17 +37,35 @@ router.get('/:id', (req, res) => {
 
 router.post('/:id/entries', (req, res) => {
   const id = req.params.id;
-  
+  const entryType = parseEntryTypeFromRequestBody(req.body);
+  let entry: NewEntry | null = null;
+
   try {
-    const entry = NewEntrySchema.parse(req.body);
+    switch (entryType) {
+      case 'Hospital':
+        entry = NewHospitalEntrySchema.parse(req.body);
+        break;
+      case 'OccupationalHealthcare':
+        entry = NewOccupationalHealthcareEntrySchema.parse(req.body);
+        break;
+      case 'HealthCheck':
+        entry = NewHealthCheckEntrySchema.parse(req.body);
+        break;
+      default: 
+        assertNever(entryType);
+    }
+
+    if (entry === null) throw new Error('Unknown entry type');
     res.send(patientsService.addEntryToPatient(id, entry));
   } catch (error: unknown) {
     if (error instanceof Error) {
       if (error.message === 'Patient not found') {
+        console.log('routes: Patient not found');
         res.status(404).send({ error: 'Patient not found' });
       }
 
       if (error instanceof z.ZodError) {
+        console.log('routes: ZodError');
         res.status(400).send({ error: error.issues });
       }
     }
